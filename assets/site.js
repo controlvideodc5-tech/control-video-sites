@@ -66,67 +66,40 @@
     return '<div class="field' + (extra && extra.full ? ' full' : '') + '"><label for="' + id + '">' + label + (extra && extra.req ? ' <span class="req" aria-hidden="true">*</span>' : '') + '</label>' +
       '<input id="' + id + '" name="' + name + '" type="' + type + '"' + (extra && extra.ac ? ' autocomplete="' + extra.ac + '"' : '') + (extra && extra.req ? ' required' : '') + (extra && extra.ph ? ' placeholder="' + esc(extra.ph) + '"' : '') + '></div>';
   }
-  function checks(id, name, label, list) {
-    return '<div class="field full" role="group" aria-labelledby="' + id + '"><span class="label" id="' + id + '">' + label + ' <span class="hint">— pick any</span></span><div class="checks">' +
-      list.map(function (v) { return '<label><input type="checkbox" name="' + name + '" value="' + esc(v) + '">' + esc(v) + '</label>'; }).join('') + '</div></div>';
+  function textarea(id, name, label, ph) {
+    return '<div class="field full"><label for="' + id + '">' + label + '</label><textarea id="' + id + '" name="' + name + '"' + (ph ? ' placeholder="' + esc(ph) + '"' : '') + '></textarea></div>';
   }
-  function textarea(id, name, label, ph, rows) {
-    return '<div class="field full"><label for="' + id + '">' + label + '</label><textarea id="' + id + '" name="' + name + '"' + (rows ? ' rows="' + rows + '" style="min-height:96px"' : '') + (ph ? ' placeholder="' + esc(ph) + '"' : '') + '></textarea></div>';
-  }
-  function legend(n, text) { return '<legend><span class="num">0' + n + '</span>' + text + '</legend>'; }
 
   var FORMS = {
     inquiry: {
       eyebrow: isLed ? 'LED Truck Co.' : 'Control Video',
       title: 'Let’s talk.',
-      lede: 'Send us what you have — drawings, a run of show, a floor plan, photos of the room. The people who will plan and run it will reply, usually within one business day.',
+      lede: 'Tell us a little about your event. The people who will plan and run it will reply, usually within one business day.',
       done: 'Thanks — it’s with our team.',
-      sections: function (p) {
-        return '<fieldset>' + legend(1, 'About you') + '<div class="fields">' +
-            input(p + 'name', 'name', 'Name', 'text', { req: 1, ac: 'name' }) + input(p + 'email', 'email', 'Email', 'email', { req: 1, ac: 'email' }) +
-            input(p + 'phone', 'phone', 'Phone', 'tel', { ac: 'tel' }) + input(p + 'org', 'organization', 'Organization', 'text', { ac: 'organization' }) +
-          '</div></fieldset>' +
-          '<fieldset>' + legend(2, 'The event') + '<div class="fields">' +
-            select(p + 'type', 'eventType', 'Event type', ['Gala / conference', 'Corporate / forum', 'Festival / concert', 'Sporting / activation', 'Government / civic', 'LED truck rental', 'Other']) +
-            input(p + 'date', 'eventDate', 'Event date', 'date') +
-            input(p + 'venue', 'venue', 'Venue or location', 'text', { full: 1, ph: 'e.g. National Building Museum, or “outdoor field, Fairfax”' }) +
-            select(p + 'aud', 'audience', 'Audience size', ['Under 100', '100–500', '500–2,000', '2,000–10,000', '10,000+', 'Not sure yet']) +
-            select(p + 'budget', 'budget', 'Budget', ['Under $10k', '$10k–$25k', '$25k–$75k', '$75k–$150k', '$150k+', 'Not sure yet']) +
-            checks(p + 'svc', 'services', 'What you need', ['LED walls', 'Projection', 'Cameras / IMAG', 'Livestream / webcast', 'Audio', 'Lighting', 'LED truck or trailer', 'Show calling / crew']) +
-            textarea(p + 'details', 'details', 'Tell us about the show', 'Schedule, rooms, content, who’s on stage, what worries you…') +
-          '</div></fieldset>';
+      fields: function (p) {
+        return input(p + 'date', 'eventDate', 'Event date', 'date') +
+          textarea(p + 'details', 'details', 'What’s the event?', 'What, where, roughly how many people, and anything you already know you need.') +
+          '<input type="hidden" name="eventType">';
       },
-      filesHint: 'Drawings, run of show, floor plans, renders, content.',
-      linksLabel: 'Shared links <span class="hint">— Dropbox, Drive, WeTransfer for anything bigger</span>',
+      filesHint: 'Drawings, run of show, floor plans — anything that helps.',
+      linkPh: 'Or paste a Dropbox / Drive link',
       payload: function (fd) {
-        return {
-          organization: fd.get('organization'), site: isLed ? 'LED Truck Co.' : 'Control Video',
-          eventType: fd.get('eventType'), eventDate: fd.get('eventDate'), venue: fd.get('venue'),
-          audience: fd.get('audience'), budget: fd.get('budget'), services: fd.getAll('services')
-        };
+        return { site: isLed ? 'LED Truck Co.' : 'Control Video', eventType: fd.get('eventType'), eventDate: fd.get('eventDate') };
       }
     },
     careers: {
       eyebrow: 'Careers',
       title: 'Join the crew.',
-      lede: 'We hire full-time staff and build a bench of freelancers for show days. Tell us what you do and send your résumé — someone who runs shows will read it.',
+      lede: 'Full-time or freelance. Tell us what you do and send your résumé — someone who runs shows will read it.',
       done: 'Thanks — we’ve got your application.',
-      sections: function (p) {
-        return '<fieldset>' + legend(1, 'About you') + '<div class="fields">' +
-            input(p + 'name', 'name', 'Name', 'text', { req: 1, ac: 'name' }) + input(p + 'email', 'email', 'Email', 'email', { req: 1, ac: 'email' }) +
-            input(p + 'phone', 'phone', 'Phone', 'tel', { ac: 'tel' }) + input(p + 'loc', 'location', 'Where you’re based', 'text', { ac: 'address-level2', ph: 'e.g. Silver Spring, MD' }) +
-          '</div></fieldset>' +
-          '<fieldset>' + legend(2, 'Your work') + '<div class="fields">' +
-            checks(p + 'roles', 'roles', 'Roles', ['Video engineer', 'LED technician', 'Camera operator', 'Audio', 'Lighting', 'Project / production manager', 'Driver / rigger (LED trucks)', 'Other']) +
-            select(p + 'avail', 'availability', 'Looking for', ['Full-time', 'Freelance / crew call', 'Either']) +
-            select(p + 'exp', 'experience', 'Years in live events', ['Under 1', '1–3', '3–7', '7+']) +
-            textarea(p + 'details', 'details', 'About you', 'Shows you’ve worked, gear you know, certifications, when you can start…') +
-          '</div></fieldset>';
+      fields: function (p) {
+        return select(p + 'role', 'role', 'Role', ['Video engineer', 'LED technician', 'Camera operator', 'Audio', 'Lighting', 'Project / production manager', 'Driver / rigger (LED trucks)', 'Other']) +
+          textarea(p + 'details', 'details', 'About you', 'Shows you’ve worked, gear you know, full-time or freelance.');
       },
-      filesHint: 'Résumé, certifications, stills from your work.',
-      linksLabel: 'Portfolio, reel or LinkedIn',
+      filesHint: 'Résumé, and anything else you’d like us to see.',
+      linkPh: 'Portfolio, reel or LinkedIn link',
       payload: function (fd) {
-        return { location: fd.get('location'), roles: fd.getAll('roles'), availability: fd.get('availability'), experience: fd.get('experience') };
+        return { roles: fd.get('role') ? [fd.get('role')] : [] };
       }
     }
   };
@@ -147,21 +120,23 @@
         '<div class="talk-aside"><h2 id="' + p + 'title">' + cfg.title + '</h2><p class="lede">' + cfg.lede + '</p>' +
           '<div class="alt">Rather talk now?<a href="tel:+13012773429">Call ' + PHONE + '</a><a href="mailto:' + EMAIL + '">' + EMAIL + '</a></div></div>' +
         '<div class="talk-main">' +
-        '<form class="talk-form" novalidate>' + cfg.sections(p) +
-          '<fieldset>' + legend(3, 'Files and links') +
+        '<form class="talk-form" novalidate><div class="fields">' +
+          input(p + 'name', 'name', 'Name', 'text', { req: 1, ac: 'name' }) + input(p + 'email', 'email', 'Email', 'email', { req: 1, ac: 'email' }) +
+          input(p + 'phone', 'phone', 'Phone', 'tel', { ac: 'tel' }) + cfg.fields(p) +
+          '<div class="field full"><span class="label">Files <span class="hint">— optional</span></span>' +
             '<div class="drop"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 21V5M9 12l7-7 7 7M5 21v5h22v-5" fill="none" stroke="currentColor" stroke-width="2.4"/></svg>' +
-              '<strong>Drop files here or browse</strong><span class="hint">' + cfg.filesHint + ' Up to ' + MAX_FILES + ' files, 5 MB each.</span>' +
+              '<span><strong>Add files</strong> <span class="hint">or drop them here</span></span><span class="hint">' + cfg.filesHint + ' Up to 5 MB each.</span>' +
               '<input type="file" multiple accept="' + ACCEPT + '" aria-label="Add files"></div>' +
             '<ul class="file-list" aria-live="polite"></ul>' +
-            '<div class="field"><label for="' + p + 'links">' + cfg.linksLabel + '</label><textarea id="' + p + 'links" name="links" rows="3" style="min-height:96px"></textarea></div>' +
-          '</fieldset>' +
-          '<fieldset>' + legend(4, 'Quick check') +
-            '<div class="check-row"><div class="field"><label for="' + p + 'answer" class="t-q">Loading question…</label><input id="' + p + 'answer" name="answer" type="number" inputmode="numeric" autocomplete="off" required></div>' +
-            '<span class="hint">Keeps the robots out.</span></div>' +
-            '<div class="hp" aria-hidden="true"><label for="' + p + 'website">Website</label><input id="' + p + 'website" name="website" type="text" tabindex="-1" autocomplete="off"></div>' +
-          '</fieldset>' +
+            '<input type="text" name="links" aria-label="Link to files" placeholder="' + esc(cfg.linkPh) + '">' +
+          '</div>' +
+        '</div>' +
+          '<div class="hp" aria-hidden="true"><label for="' + p + 'website">Website</label><input id="' + p + 'website" name="website" type="text" tabindex="-1" autocomplete="off"></div>' +
           '<div class="form-error" role="alert" hidden></div>' +
-          '<div class="submit-row"><button type="submit" class="btn btn-primary">Send it</button><p class="fine">We only use this to reply to you.</p></div>' +
+          '<div class="submit-row">' +
+            '<div class="field quick"><label for="' + p + 'answer" class="t-q">Loading question…</label><input id="' + p + 'answer" name="answer" type="number" inputmode="numeric" autocomplete="off" required></div>' +
+            '<button type="submit" class="btn btn-primary">Send it</button>' +
+          '</div>' +
         '</form>' +
         '<div class="talk-done" hidden tabindex="-1"><span class="eyebrow">Received</span><h3>' + cfg.done + '</h3><p class="lede">We’ll reply to <strong class="done-email"></strong> soon. If it’s urgent, call ' + PHONE + '.</p><button type="button" class="btn btn-ghost talk-finish">Close</button></div>' +
         '</div>' +
@@ -303,8 +278,7 @@
         opener = from || null;
         if (!done.hidden) reset();
         prefill = prefill || {};
-        if (prefill.eventType) form.elements.eventType.value = prefill.eventType;
-        if (prefill.service) { var box = form.querySelector('input[name=services][value="' + prefill.service + '"]'); if (box) box.checked = true; }
+        if (form.elements.eventType) form.elements.eventType.value = prefill.eventType || '';
         if (prefill.details && !form.elements.details.value) form.elements.details.value = prefill.details;
         document.documentElement.classList.add('talk-open');
         dlg.showModal();
@@ -332,7 +306,6 @@
       var prefill = {};
       if (isLed || /LED|truck|booking/i.test(subject)) {
         prefill.eventType = 'LED truck rental';
-        prefill.service = 'LED truck or trailer';
         var rig = subject.replace(/\s*booking$/i, '');
         if (rig && !/^LED truck$/i.test(rig)) prefill.details = 'Interested in: ' + rig + '\n\n';
       }

@@ -25,7 +25,7 @@ GitHub Pages serves `main` at https://controlvideodc5-tech.github.io/control-vid
 Netlify: site `control-video-review` — connect this repo in **Project configuration → Build & deploy → Link repository**. No build command; publish directory is the repo root.
 
 ## Forms (Let's talk + Careers)
-Buttons that used to open email ("Let’s talk", "Start a project", "Email us", "Book a truck", rig cards) open a full-screen project form; any "Careers" link opens a separate candidate form. Both accept file uploads (up to 10 files, 5 MB each) plus shared links for anything larger. Plain email-address links still open email.
+Buttons that used to open email ("Let’s talk", "Start a project", "Email us", "Book a truck", rig cards) open a short full-screen project form (name, email, phone, date, one description box, files); any "Careers" link opens a separate candidate form (name, email, phone, role, about, résumé). Both accept file uploads (up to 10 files, 5 MB each) plus a link for anything larger. Plain email-address links still open email.
 
 Submissions go through `netlify/functions/forms.mjs` into the Airtable base **Control Video — Inquiries**:
 
