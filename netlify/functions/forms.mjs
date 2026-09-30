@@ -24,6 +24,7 @@ const ALLOWED_EXT = /\.(pdf|png|jpe?g|gif|webp|heic|svg|tiff?|dwg|dxf|vwx|skp|do
 
 const CHOICES = {
   site: ['Control Video', 'LED Truck Co.'],
+  channel: ['Contact form', '5-things bot'],
   eventType: ['Gala / conference', 'Corporate / forum', 'Festival / concert', 'Sporting / activation', 'Government / civic', 'LED truck rental', 'Other'],
   headcountIs: ['Confirmed', 'Capacity cap', 'Best guess'],
   setting: ['Indoor', 'Outdoor', 'Both'],
@@ -36,7 +37,7 @@ const CHOICES = {
 
 // Maps a validated submission to Airtable fields, per path.
 const BUILD = {
-  // The "5 things we need to know about your event" sheet.
+  // Contact form, or the "5 things we need to know about your event" bot.
   inquiry(data, common) {
     const links = clean(data.links, 4000);
     return {
@@ -44,6 +45,8 @@ const BUILD = {
       Organization: clean(data.organization, 200) || undefined,
       Site: pick(data.site, CHOICES.site),
       'Event type': pick(data.eventType, CHOICES.eventType),
+      'Came from': pick(data.channel, CHOICES.channel),
+      'Event date': /^\d{4}-\d{2}-\d{2}$/.test(data.eventDate || '') ? data.eventDate : undefined,
       Headcount: clean(data.headcount, 100) || undefined,
       'Headcount is': pick(data.headcountIs, CHOICES.headcountIs),
       'Venue / location': clean(data.venue, 300) || undefined,

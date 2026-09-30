@@ -43,139 +43,144 @@
   });
 })();
 
-// Full-screen forms, opened by call-to-action links that would otherwise email hello@.
-// Two separate paths: "Let's talk" project inquiries, and Careers (candidates, from any
-// link whose subject is "Careers"). Without JS the links still work as plain mailto links.
+// Contact forms and the "5 things" bot. All three post to the Netlify function
+// (netlify/functions/forms.mjs), which saves to Airtable:
+//   - 5-things bot: every project call-to-action ("Let's talk", "Start a project", "Book a truck"…)
+//   - Simple contact form: reached from the bot ("Just send a message")
+//   - Careers form: any link whose subject is "Careers"
+// Without JS the CTA links still work as plain mailto links.
 (function () {
   var EMAIL = 'hello@controlvideo.com';
   var PHONE = '(301) 277-3429';
-  // The form API runs on Netlify. On GitHub Pages, post across to the Netlify site.
+  // The API runs on Netlify. On GitHub Pages, post across to the Netlify site.
   var API_ROOT = (window.CV_API || (location.hostname.endsWith('github.io') ? 'https://control-video-review.netlify.app' : '')) + '/api/';
   var MAX_BYTES = 5 * 1024 * 1024;
   var MAX_FILES = 10;
   var ACCEPT = '.pdf,.png,.jpg,.jpeg,.gif,.webp,.heic,.svg,.tif,.tiff,.dwg,.dxf,.vwx,.skp,.doc,.docx,.xls,.xlsx,.csv,.ppt,.pptx,.key,.pages,.numbers,.txt,.rtf,.zip,.mp4,.mov';
-  var isLed = document.body.classList.contains('light');
+  var SITE = document.body.classList.contains('light') ? 'LED Truck Co.' : 'Control Video';
+  var isLed = SITE === 'LED Truck Co.';
   if (!window.HTMLDialogElement) return;
 
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
-  function select(id, name, label, list) {
-    return '<div class="field"><label for="' + id + '">' + label + '</label><select id="' + id + '" name="' + name + '"><option value="">Choose…</option>' +
-      list.map(function (v) { return '<option>' + esc(v) + '</option>'; }).join('') + '</select></div>';
-  }
-  function input(id, name, label, type, extra) {
-    return '<div class="field' + (extra && extra.full ? ' full' : '') + '"><label for="' + id + '">' + label + (extra && extra.req ? ' <span class="req" aria-hidden="true">*</span>' : '') + '</label>' +
-      '<input id="' + id + '" name="' + name + '" type="' + type + '"' + (extra && extra.ac ? ' autocomplete="' + extra.ac + '"' : '') + (extra && extra.req ? ' required' : '') + (extra && extra.ph ? ' placeholder="' + esc(extra.ph) + '"' : '') + '></div>';
-  }
-  function textarea(id, name, label, ph) {
-    return '<div class="field full"><label for="' + id + '">' + label + '</label><textarea id="' + id + '" name="' + name + '"' + (ph ? ' placeholder="' + esc(ph) + '"' : '') + '></textarea></div>';
+
+  // ---------- shared: spam check, file checks, submit + upload + finalize ----------
+
+  function getChallenge(kind) {
+    return fetch(API_ROOT + kind + '/challenge', { cache: 'no-store' }).then(function (r) { if (!r.ok) throw 0; return r.json(); });
   }
 
-  function choices(id, name, label, list, type, hint) {
-    return '<div class="field full" role="' + (type === 'radio' ? 'radiogroup' : 'group') + '" aria-labelledby="' + id + '"><span class="label" id="' + id + '">' + label + (hint ? ' <span class="hint">' + hint + '</span>' : '') + '</span><div class="checks">' +
-      list.map(function (v) { return '<label><input type="' + type + '" name="' + name + '" value="' + esc(v) + '">' + esc(v) + '</label>'; }).join('') + '</div></div>';
+  function post(kind, path, body, headers) {
+    return fetch(API_ROOT + kind + path, { method: 'POST', headers: headers || { 'Content-Type': 'application/json' }, body: body })
+      .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { if (!r.ok) throw new Error(j.error || 'Something went wrong.'); return j; }); });
+  }
+
+  function fileProblem(file) {
+    var ext = (file.name.match(/\.[^.]+$/) || [''])[0].toLowerCase();
+    if (ACCEPT.split(',').indexOf(ext) === -1) return 'Unsupported type';
+    if (file.size > MAX_BYTES) return 'Over 5 MB — add a link instead';
+    return '';
+  }
+
+  // files: [{file, error?, state?}]; onChange re-renders file states as uploads progress.
+  function submit(kind, payload, files, onChange) {
+    return post(kind, '', JSON.stringify(payload)).then(function (rec) {
+      var failed = [];
+      var queue = files.filter(function (f) { if (f.error) failed.push(f.file.name); return !f.error; });
+      var i = 0;
+      function next() {
+        if (i >= queue.length) return Promise.resolve();
+        var f = queue[i++];
+        f.state = 'Uploading…'; onChange();
+        return post(kind, '/file', f.file, {
+          'Content-Type': f.file.type || 'application/octet-stream',
+          'X-Record': rec.id, 'X-Upload-Token': rec.uploadToken, 'X-Filename': encodeURIComponent(f.file.name)
+        }).then(function () { f.state = 'Uploaded'; }, function (err) { f.state = err.message; f.error = true; failed.push(f.file.name); })
+          .then(function () { onChange(); return next(); });
+      }
+      return next().then(function () {
+        return post(kind, '/finalize', JSON.stringify({ id: rec.id, uploadToken: rec.uploadToken, failedFiles: failed }));
+      });
+    });
+  }
+
+  function fmtSize(n) { return n < 1048576 ? Math.max(1, Math.round(n / 1024)) + ' KB' : (n / 1048576).toFixed(1) + ' MB'; }
+
+  function renderFileList(list, files) {
+    list.innerHTML = '';
+    files.forEach(function (f, i) {
+      var li = document.createElement('li');
+      li.innerHTML = '<span class="fname"></span><span class="fsize"></span><span class="fstate"></span><button type="button">×</button>';
+      li.querySelector('.fname').textContent = f.file.name;
+      li.querySelector('.fsize').textContent = fmtSize(f.file.size);
+      var st = li.querySelector('.fstate');
+      st.textContent = f.state || '';
+      if (f.error) st.classList.add('err');
+      var b = li.querySelector('button');
+      b.setAttribute('aria-label', 'Remove ' + f.file.name);
+      b.addEventListener('click', function () { files.splice(i, 1); renderFileList(list, files); });
+      list.appendChild(li);
+    });
+  }
+
+  function addFiles(files, fileList) {
+    Array.prototype.forEach.call(fileList, function (file) {
+      if (files.length >= MAX_FILES) return;
+      var problem = fileProblem(file);
+      files.push(problem ? { file: file, error: true, state: problem } : { file: file });
+    });
+  }
+
+  // ---------- full-screen forms: "Let's talk" and Careers ----------
+
+  function field(id, name, label, type, o) {
+    o = o || {};
+    return '<div class="field' + (o.full ? ' full' : '') + '"><label for="' + id + '">' + label + (o.req ? ' <span class="req" aria-hidden="true">*</span>' : '') + '</label>' +
+      (type === 'textarea'
+        ? '<textarea id="' + id + '" name="' + name + '"' + (o.ph ? ' placeholder="' + esc(o.ph) + '"' : '') + '></textarea>'
+        : type === 'select'
+          ? '<select id="' + id + '" name="' + name + '"><option value="">Choose…</option>' + o.list.map(function (v) { return '<option>' + esc(v) + '</option>'; }).join('') + '</select>'
+          : '<input id="' + id + '" name="' + name + '" type="' + type + '"' + (o.ac ? ' autocomplete="' + o.ac + '"' : '') + (o.req ? ' required' : '') + (o.ph ? ' placeholder="' + esc(o.ph) + '"' : '') + '>') +
+      '</div>';
   }
 
   var FORMS = {
-    // Follows the printed "5 things we need to know about your event" sheet, one question per screen.
     inquiry: {
-      eyebrow: isLed ? 'LED Truck Co.' : 'Control Video',
+      eyebrow: SITE,
       title: 'Let’s talk.',
-      lede: 'Five answers get us to a real number. Rough answers are fine — the people who will plan and run it will reply, usually within one business day.',
+      lede: 'Tell us a little about your event. The people who will plan and run it will reply, usually within one business day.',
       done: 'Thanks — it’s with our team.',
-      sheet: 'assets/control-video-5-things.pdf',
-      steps: function (p) {
-        return [
-          { title: 'First, who’s asking?', hint: 'Email or phone — whichever you’d rather we use.',
-            html: input(p + 'name', 'name', 'Your name', 'text', { req: 1, ac: 'name' }) + input(p + 'org', 'organization', 'Organization', 'text', { ac: 'organization' }) +
-              input(p + 'email', 'email', 'Email', 'email', { ac: 'email' }) + input(p + 'phone', 'phone', 'Phone', 'tel', { ac: 'tel' }) },
-          { n: 1, title: 'How many people?', hint: 'Your best number, even a range. It sizes the screens, the gear and the crew.',
-            html: input(p + 'count', 'headcount', 'Number of people', 'text', { full: 1, ph: 'e.g. 400, or 300–500' }) +
-              choices(p + 'countis', 'headcountIs', 'That number is', ['Confirmed', 'Capacity cap', 'Best guess'], 'radio') },
-          { n: 2, title: 'Where is it?', hint: 'Venue and the specific room. Indoor or outdoor changes power, weather and rigging.',
-            html: input(p + 'venue', 'venue', 'Venue and room', 'text', { full: 1, ph: 'e.g. Mellon Auditorium, main hall' }) +
-              choices(p + 'setting', 'setting', 'Setting', ['Indoor', 'Outdoor', 'Both'], 'radio') },
-          { n: 3, title: 'When?', hint: 'Show date and time, plus when we can get in and when we have to be out.',
-            html: '<div class="fields three full">' + input(p + 'show', 'showTime', 'Show date and time', 'text', { ph: 'e.g. Fri Mar 14, 7 pm' }) +
-              input(p + 'in', 'loadIn', 'We can get in', 'text', { ph: 'e.g. Mar 14, 8 am' }) + input(p + 'out', 'outBy', 'We must be out by', 'text', { ph: 'e.g. midnight' }) + '</div>' },
-          { n: 4, title: 'What should the audience see and hear?', hint: 'Check what you know you need. Not sure is a fine answer.',
-            html: choices(p + 'see', 'seeHear', 'Pick any', ['LED wall', 'Projection', 'Screens / TVs', 'Cameras on screen', 'Livestream', 'Recording', 'Audio', 'Lighting', 'Stage', 'LED truck or trailer', 'Not sure yet'], 'checkbox') },
-          { n: 5, title: 'What can’t go wrong?', hint: 'The one moment that has to land. We build the plan around it.',
-            html: textarea(p + 'land', 'mustLand', 'The moment that has to land', 'e.g. The keynote walk-on at 7:30 — video, lights and music on one cue.') +
-              choices(p + 'budget', 'budget', 'Budget range', ['Under $10k', '$10k–25k', '$25k–50k', '$50k+', 'Not set'], 'radio', '— if you have one') +
-              '<input type="hidden" name="eventType"><input type="hidden" name="details">', files: true }
-        ];
+      fields: function (p) {
+        return field(p + 'name', 'name', 'Name', 'text', { req: 1, ac: 'name' }) + field(p + 'email', 'email', 'Email', 'email', { req: 1, ac: 'email' }) +
+          field(p + 'phone', 'phone', 'Phone', 'tel', { ac: 'tel' }) + field(p + 'date', 'eventDate', 'Event date', 'date') +
+          field(p + 'details', 'details', 'What’s the event?', 'textarea', { full: 1, ph: 'What, where, roughly how many people, and anything you already know you need.' }) +
+          '<input type="hidden" name="eventType">';
       },
-      filesHint: 'Floor plans and a run of show help too.',
+      filesHint: 'Drawings, run of show, floor plans — anything that helps.',
       linkPh: 'Or paste a Dropbox / Drive link',
-      payload: function (fd) {
-        return {
-          site: isLed ? 'LED Truck Co.' : 'Control Video', eventType: fd.get('eventType'), organization: fd.get('organization'),
-          headcount: fd.get('headcount'), headcountIs: fd.get('headcountIs'), venue: fd.get('venue'), setting: fd.get('setting'),
-          showTime: fd.get('showTime'), loadIn: fd.get('loadIn'), outBy: fd.get('outBy'), seeHear: fd.getAll('seeHear'),
-          mustLand: fd.get('mustLand'), budget: fd.get('budget')
-        };
-      }
+      payload: function (fd) { return { site: SITE, channel: 'Contact form', eventType: fd.get('eventType'), eventDate: fd.get('eventDate') }; }
     },
     careers: {
       eyebrow: 'Careers',
       title: 'Join the crew.',
       lede: 'Full-time or freelance. Tell us what you do and send your résumé — someone who runs shows will read it.',
       done: 'Thanks — we’ve got your application.',
-      emailRequired: true,
       fields: function (p) {
-        return input(p + 'name', 'name', 'Name', 'text', { req: 1, ac: 'name' }) + input(p + 'email', 'email', 'Email', 'email', { req: 1, ac: 'email' }) +
-          input(p + 'phone', 'phone', 'Phone', 'tel', { ac: 'tel' }) +
-          select(p + 'role', 'role', 'Role', ['Video engineer', 'LED technician', 'Camera operator', 'Audio', 'Lighting', 'Project / production manager', 'Driver / rigger (LED trucks)', 'Other']) +
-          textarea(p + 'details', 'details', 'About you', 'Shows you’ve worked, gear you know, full-time or freelance.');
+        return field(p + 'name', 'name', 'Name', 'text', { req: 1, ac: 'name' }) + field(p + 'email', 'email', 'Email', 'email', { req: 1, ac: 'email' }) +
+          field(p + 'phone', 'phone', 'Phone', 'tel', { ac: 'tel' }) +
+          field(p + 'role', 'role', 'Role', 'select', { list: ['Video engineer', 'LED technician', 'Camera operator', 'Audio', 'Lighting', 'Project / production manager', 'Driver / rigger (LED trucks)', 'Other'] }) +
+          field(p + 'details', 'details', 'About you', 'textarea', { full: 1, ph: 'Shows you’ve worked, gear you know, full-time or freelance.' });
       },
       filesHint: 'Résumé, and anything else you’d like us to see.',
       linkPh: 'Portfolio, reel or LinkedIn link',
-      payload: function (fd) {
-        return { roles: fd.get('role') ? [fd.get('role')] : [] };
-      }
+      payload: function (fd) { return { roles: fd.get('role') ? [fd.get('role')] : [] }; }
     }
   };
 
   var dialogs = {};
 
-  function build(kind) {
+  function buildForm(kind) {
     var cfg = FORMS[kind];
     var p = kind.charAt(0) + '-';
-    var api = API_ROOT + kind;
-    var filesBlock =
-      '<div class="field full"><span class="label">Files <span class="hint">— optional</span></span>' +
-        '<div class="drop"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 21V5M9 12l7-7 7 7M5 21v5h22v-5" fill="none" stroke="currentColor" stroke-width="2.4"/></svg>' +
-          '<span><strong>Add files</strong> <span class="hint">or drop them here</span></span><span class="hint">' + cfg.filesHint + ' Up to 5 MB each.</span>' +
-          '<input type="file" multiple accept="' + ACCEPT + '" aria-label="Add files"></div>' +
-        '<ul class="file-list" aria-live="polite"></ul>' +
-        '<input type="text" name="links" aria-label="Link to files" placeholder="' + esc(cfg.linkPh) + '">' +
-      '</div>';
-    var quick = '<div class="field quick"><label for="' + p + 'answer" class="t-q">Loading question…</label><input id="' + p + 'answer" name="answer" type="number" inputmode="numeric" autocomplete="off" required></div>';
-    var honeypot = '<div class="hp" aria-hidden="true"><label for="' + p + 'website">Website</label><input id="' + p + 'website" name="website" type="text" tabindex="-1" autocomplete="off"></div>';
-    var errorBox = '<div class="form-error" role="alert" hidden></div>';
-    var body;
-    if (cfg.steps) {
-      var steps = cfg.steps(p);
-      body =
-        '<div class="wiz-top"><span class="wiz-count"></span><div class="wiz-bar" aria-hidden="true"><span></span></div></div>' +
-        steps.map(function (s, i) {
-          return '<section class="step"' + (i ? ' hidden' : '') + ' aria-labelledby="' + p + 'st' + i + '">' +
-            '<div class="step-head">' + (s.n ? '<span class="step-n" aria-hidden="true">' + s.n + '</span>' : '') +
-              '<div><h3 id="' + p + 'st' + i + '" tabindex="-1">' + s.title + '</h3><p class="muted">' + s.hint + '</p></div></div>' +
-            '<div class="fields">' + s.html + (s.files ? filesBlock : '') + '</div>' +
-            (i === steps.length - 1 ? '<div class="fields">' + quick + '</div>' : '') +
-          '</section>';
-        }).join('') + honeypot + errorBox +
-        '<div class="wiz-nav">' +
-          '<button type="button" class="btn btn-ghost wiz-back">← Back</button>' +
-          '<button type="button" class="wiz-skip">Skip</button>' +
-          '<button type="button" class="btn btn-primary wiz-next">Next →</button>' +
-          '<button type="submit" class="btn btn-primary wiz-send">Send it</button>' +
-        '</div>';
-    } else {
-      body = '<div class="fields">' + cfg.fields(p) + filesBlock + '</div>' + honeypot + errorBox +
-        '<div class="submit-row">' + quick + '<button type="submit" class="btn btn-primary">Send it</button></div>';
-    }
     var dlg = document.createElement('dialog');
     dlg.className = 'talk';
     dlg.setAttribute('aria-labelledby', p + 'title');
@@ -185,9 +190,25 @@
       '<div class="wrap talk-body">' +
         '<div class="talk-aside"><h2 id="' + p + 'title">' + cfg.title + '</h2><p class="lede">' + cfg.lede + '</p>' +
           '<div class="alt">Rather talk now?<a href="tel:+13012773429">Call ' + PHONE + '</a><a href="mailto:' + EMAIL + '">' + EMAIL + '</a></div>' +
-          (cfg.sheet ? '<div class="alt">Prefer paper?<a href="' + cfg.sheet + '" download>Download the 5-things sheet (PDF)</a></div>' : '') + '</div>' +
+          (kind === 'inquiry' ? '<div class="alt">Want a real number faster?<button type="button" class="linkish to-bot">Answer 5 quick questions →</button></div>' : '') +
+        '</div>' +
         '<div class="talk-main">' +
-        '<form class="talk-form" novalidate>' + body + '</form>' +
+        '<form class="talk-form" novalidate><div class="fields">' + cfg.fields(p) +
+          '<div class="field full"><span class="label">Files <span class="hint">— optional</span></span>' +
+            '<div class="drop"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 21V5M9 12l7-7 7 7M5 21v5h22v-5" fill="none" stroke="currentColor" stroke-width="2.4"/></svg>' +
+              '<span><strong>Add files</strong> <span class="hint">or drop them here</span></span><span class="hint">' + cfg.filesHint + ' Up to 5 MB each.</span>' +
+              '<input type="file" multiple accept="' + ACCEPT + '" aria-label="Add files"></div>' +
+            '<ul class="file-list" aria-live="polite"></ul>' +
+            '<input type="text" name="links" aria-label="Link to files" placeholder="' + esc(cfg.linkPh) + '">' +
+          '</div>' +
+        '</div>' +
+          '<div class="hp" aria-hidden="true"><label for="' + p + 'website">Website</label><input id="' + p + 'website" name="website" type="text" tabindex="-1" autocomplete="off"></div>' +
+          '<div class="form-error" role="alert" hidden></div>' +
+          '<div class="submit-row">' +
+            '<div class="field quick"><label for="' + p + 'answer" class="t-q">Loading question…</label><input id="' + p + 'answer" name="answer" type="number" inputmode="numeric" autocomplete="off" required></div>' +
+            '<button type="submit" class="btn btn-primary">Send it</button>' +
+          '</div>' +
+        '</form>' +
         '<div class="talk-done" hidden tabindex="-1"><span class="eyebrow">Received</span><h3>' + cfg.done + '</h3><p class="lede">We’ll reply to <strong class="done-email"></strong> soon. If it’s urgent, call ' + PHONE + '.</p><button type="button" class="btn btn-ghost talk-finish">Close</button></div>' +
         '</div>' +
       '</div>';
@@ -204,116 +225,30 @@
     var challenge = null;
     var opener = null;
 
-    function fmt(n) { return n < 1048576 ? Math.max(1, Math.round(n / 1024)) + ' KB' : (n / 1048576).toFixed(1) + ' MB'; }
-
     function loadChallenge() {
       var q = dlg.querySelector('.t-q');
       q.textContent = 'Loading question…';
-      return fetch(api + '/challenge', { cache: 'no-store' }).then(function (r) { if (!r.ok) throw 0; return r.json(); })
-        .then(function (c) { challenge = c; q.textContent = c.question; })
-        .catch(function () { challenge = null; q.textContent = 'Quick check unavailable'; });
+      getChallenge(kind).then(function (c) { challenge = c; q.textContent = c.question; }, function () { challenge = null; q.textContent = 'Quick check unavailable'; });
     }
-
-    function renderFiles() {
-      list.innerHTML = '';
-      files.forEach(function (f, i) {
-        var li = document.createElement('li');
-        li.innerHTML = '<span class="fname"></span><span class="fsize"></span><span class="fstate"></span><button type="button">×</button>';
-        li.querySelector('.fname').textContent = f.file.name;
-        li.querySelector('.fsize').textContent = fmt(f.file.size);
-        var st = li.querySelector('.fstate');
-        st.textContent = f.state || '';
-        if (f.error) st.classList.add('err');
-        var b = li.querySelector('button');
-        b.setAttribute('aria-label', 'Remove ' + f.file.name);
-        b.addEventListener('click', function () { files.splice(i, 1); renderFiles(); });
-        list.appendChild(li);
-      });
-    }
-
-    function addFiles(fileList) {
-      Array.prototype.forEach.call(fileList, function (file) {
-        if (files.length >= MAX_FILES) return;
-        var ext = (file.name.match(/\.[^.]+$/) || [''])[0].toLowerCase();
-        var entry = { file: file };
-        if (ACCEPT.split(',').indexOf(ext) === -1) { entry.error = true; entry.state = 'Unsupported type'; }
-        else if (file.size > MAX_BYTES) { entry.error = true; entry.state = 'Over 5 MB — add a link instead'; }
-        files.push(entry);
-      });
-      renderFiles();
-    }
-
-    picker.addEventListener('change', function () { addFiles(picker.files); picker.value = ''; });
-    ['dragenter', 'dragover'].forEach(function (t) { drop.addEventListener(t, function (e) { e.preventDefault(); drop.classList.add('over'); }); });
-    ['dragleave', 'drop'].forEach(function (t) { drop.addEventListener(t, function () { drop.classList.remove('over'); }); });
-    drop.addEventListener('drop', function (e) { e.preventDefault(); if (e.dataTransfer) addFiles(e.dataTransfer.files); });
-
-    function showError(msg, field) {
+    function showError(msg, el) {
       errBox.textContent = msg;
       errBox.hidden = false;
-      if (field) { field.setAttribute('aria-invalid', 'true'); field.focus(); } else errBox.scrollIntoView({ block: 'nearest' });
+      if (el) { el.setAttribute('aria-invalid', 'true'); el.focus(); } else errBox.scrollIntoView({ block: 'nearest' });
     }
 
-    function post(path, body, headers) {
-      return fetch(api + path, { method: 'POST', headers: headers || { 'Content-Type': 'application/json' }, body: body })
-        .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { if (!r.ok) throw new Error(j.error || 'Something went wrong.'); return j; }); });
-    }
-
+    picker.addEventListener('change', function () { addFiles(files, picker.files); renderFileList(list, files); picker.value = ''; });
+    ['dragenter', 'dragover'].forEach(function (t) { drop.addEventListener(t, function (e) { e.preventDefault(); drop.classList.add('over'); }); });
+    ['dragleave', 'drop'].forEach(function (t) { drop.addEventListener(t, function () { drop.classList.remove('over'); }); });
+    drop.addEventListener('drop', function (e) { e.preventDefault(); if (e.dataTransfer) { addFiles(files, e.dataTransfer.files); renderFileList(list, files); } });
     form.addEventListener('input', function (e) { if (e.target.getAttribute('aria-invalid')) e.target.removeAttribute('aria-invalid'); });
-
-    // Name plus a way to reach them: email, or (for project inquiries) a phone number.
-    function contactError() {
-      var name = form.elements.name, email = form.elements.email, phone = form.elements.phone;
-      if (!name.value.trim()) return ['Please add your name.', name];
-      if (email.value.trim() && !email.validity.valid) return ['That email address doesn’t look right.', email];
-      if (cfg.emailRequired && !email.value.trim()) return ['Please add your email address.', email];
-      if (!email.value.trim() && !phone.value.trim()) return ['Please add an email address or phone number.', email];
-      return null;
-    }
-
-    // Step-by-step flow (project inquiry only).
-    var stepEls = form.querySelectorAll('.step');
-    var cur = 0;
-    var last = stepEls.length - 1;
-    function show(i) {
-      cur = i;
-      stepEls.forEach(function (s, j) { s.hidden = j !== i; });
-      form.querySelector('.wiz-back').hidden = i === 0;
-      form.querySelector('.wiz-skip').hidden = i === 0 || i === last;
-      form.querySelector('.wiz-next').hidden = i === last;
-      form.querySelector('.wiz-send').hidden = i !== last;
-      form.querySelector('.wiz-count').textContent = i === 0 ? 'Start' : i + ' of ' + last;
-      form.querySelector('.wiz-bar span').style.width = (i / last * 100) + '%';
-      errBox.hidden = true;
-      dlg.classList.toggle('past-start', i > 0);
-      dlg.scrollTop = 0;
-    }
-    function go(i) {
-      show(i);
-      var first = stepEls[i].querySelector('input:not([type=hidden]), textarea');
-      (i === 0 && first ? first : stepEls[i].querySelector('h3')).focus();
-    }
-    if (stepEls.length) {
-      form.querySelector('.wiz-next').addEventListener('click', function () {
-        if (cur === 0) { var err = contactError(); if (err) return showError(err[0], err[1]); }
-        go(cur + 1);
-      });
-      form.querySelector('.wiz-skip').addEventListener('click', function () { go(cur + 1); });
-      form.querySelector('.wiz-back').addEventListener('click', function () { go(cur - 1); });
-      // Enter moves forward instead of submitting early.
-      form.addEventListener('keydown', function (e) {
-        if (e.key === 'Enter' && cur < last && e.target.tagName === 'INPUT') { e.preventDefault(); form.querySelector('.wiz-next').click(); }
-      });
-      show(0);
-    }
 
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       errBox.hidden = true;
       var fd = new FormData(form);
-      var answer = form.elements.answer;
-      var cErr = contactError();
-      if (cErr) { if (stepEls.length) show(0); return showError(cErr[0], cErr[1]); }
+      var name = form.elements.name, email = form.elements.email, answer = form.elements.answer;
+      if (!name.value.trim()) return showError('Please add your name.', name);
+      if (!email.value.trim() || !email.validity.valid) return showError('Please add a valid email address.', email);
       if (!answer.value.trim()) return showError('Please answer the quick check.', answer);
       if (!challenge) return showError('We couldn’t load the quick check. Email ' + EMAIL + ' or call ' + PHONE + ' instead.');
 
@@ -324,26 +259,8 @@
 
       submitBtn.disabled = true;
       submitBtn.textContent = 'Sending…';
-      var replyTo = payload.email || payload.phone;
-      post('', JSON.stringify(payload)).then(function (rec) {
-        var failed = [];
-        var queue = files.filter(function (f) { if (f.error) failed.push(f.file.name); return !f.error; });
-        var i = 0;
-        function next() {
-          if (i >= queue.length) return Promise.resolve();
-          var f = queue[i++];
-          f.state = 'Uploading…'; renderFiles();
-          return post('/file', f.file, {
-            'Content-Type': f.file.type || 'application/octet-stream',
-            'X-Record': rec.id, 'X-Upload-Token': rec.uploadToken, 'X-Filename': encodeURIComponent(f.file.name)
-          }).then(function () { f.state = 'Uploaded'; }, function (err) { f.state = err.message; f.error = true; failed.push(f.file.name); })
-            .then(function () { renderFiles(); return next(); });
-        }
-        return next().then(function () {
-          return post('/finalize', JSON.stringify({ id: rec.id, uploadToken: rec.uploadToken, failedFiles: failed }));
-        });
-      }).then(function () {
-        dlg.querySelector('.done-email').textContent = replyTo;
+      submit(kind, payload, files, function () { renderFileList(list, files); }).then(function () {
+        dlg.querySelector('.done-email').textContent = payload.email;
         form.hidden = true;
         done.hidden = false;
         done.focus();
@@ -358,18 +275,19 @@
     });
 
     function reset() {
-      form.reset(); files = []; renderFiles();
+      form.reset(); files.length = 0; renderFileList(list, files);
       form.hidden = false; done.hidden = true; errBox.hidden = true;
-      if (stepEls.length) show(0);
     }
 
     dlg.addEventListener('close', function () {
       document.documentElement.classList.remove('talk-open');
-      if (location.hash === '#' + kind) history.replaceState(null, '', location.pathname + location.search);
+      if (location.hash === '#' + kind || location.hash === '#message') history.replaceState(null, '', location.pathname + location.search);
       if (opener) opener.focus();
     });
     dlg.querySelector('.talk-close').addEventListener('click', function () { dlg.close(); });
     dlg.querySelector('.talk-finish').addEventListener('click', function () { dlg.close(); reset(); });
+    var toBot = dlg.querySelector('.to-bot');
+    if (toBot) toBot.addEventListener('click', function () { var from = opener; opener = null; dlg.close(); bot.open(from); });
 
     return {
       open: function (from, prefill) {
@@ -378,7 +296,6 @@
         prefill = prefill || {};
         if (form.elements.eventType) form.elements.eventType.value = prefill.eventType || '';
         if (prefill.details && !form.elements.details.value) form.elements.details.value = prefill.details;
-        if (prefill.seeHear) { var box = form.querySelector('input[name=seeHear][value="' + prefill.seeHear + '"]'); if (box) box.checked = true; }
         document.documentElement.classList.add('talk-open');
         dlg.showModal();
         form.elements.name.focus();
@@ -387,7 +304,259 @@
     };
   }
 
-  function get(kind) { return dialogs[kind] || (dialogs[kind] = build(kind)); }
+  function getForm(kind) { return dialogs[kind] || (dialogs[kind] = buildForm(kind)); }
+
+  // ---------- the "5 things" bot ----------
+  // Asks the questions from the printed "5 things we need to know about your event" sheet,
+  // one at a time, then files the answers as an inquiry.
+
+  var bot = (function () {
+    var panel, log, chips, entry, input, sendBtn, opener, prefillNow;
+    var answers, files, challenge, step, busy;
+
+    var SEE_HEAR = ['LED wall', 'Projection', 'Screens / TVs', 'Cameras on screen', 'Livestream', 'Recording', 'Audio', 'Lighting', 'Stage', 'LED truck or trailer', 'Not sure yet'];
+
+    // Each step: say something, then collect an answer by text and/or chips.
+    var SCRIPT = [
+      { key: 'name', say: ['Hi — I’m the ' + SITE + ' planning bot. Five answers get us to a real number, and rough answers are fine.', 'First, what’s your name?'], text: 'Your name', required: true },
+      { key: 'contact', say: function () { return ['Thanks, ' + first(answers.name) + '. What’s the best email or phone number to reach you?']; }, text: 'Email or phone', required: true,
+        check: function (v) { return /@/.test(v) ? (/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v) ? '' : 'That email doesn’t look quite right — try again?') : ((v.match(/\d/g) || []).length >= 7 ? '' : 'Could you give me an email address or a phone number with area code?'); } },
+      { key: 'organization', say: ['What organization is this for?'], text: 'Organization', skip: 'Just me' },
+      { key: 'headcount', n: 1, say: ['1 of 5 · How many people?', 'Your best number, even a range. It sizes the screens, the gear and the crew.'], text: 'e.g. 400, or 300–500', skip: 'Not sure' },
+      { key: 'headcountIs', say: ['Is that confirmed, a capacity cap, or a best guess?'], chips: ['Confirmed', 'Capacity cap', 'Best guess'], when: function () { return !!answers.headcount; } },
+      { key: 'venue', n: 2, say: ['2 of 5 · Where is it?', 'Venue and the specific room.'], text: 'e.g. Mellon Auditorium, main hall', skip: 'Not booked yet' },
+      { key: 'setting', say: ['Indoor, outdoor, or both? It changes power, weather and rigging.'], chips: ['Indoor', 'Outdoor', 'Both'] },
+      { key: 'showTime', n: 3, say: ['3 of 5 · When is the show? Date and time.'], text: 'e.g. Fri Mar 14, 7 pm', skip: 'Not set yet' },
+      { key: 'loadIn', say: ['When can we get in to set up?'], text: 'e.g. Mar 14, 8 am', skip: 'Don’t know yet' },
+      { key: 'outBy', say: ['And when do we have to be out?'], text: 'e.g. midnight', skip: 'Don’t know yet' },
+      { key: 'seeHear', n: 4, say: ['4 of 5 · What should the audience see and hear?', 'Tap everything you know you need, then Done. “Not sure yet” is a fine answer.'], multi: SEE_HEAR },
+      { key: 'mustLand', n: 5, say: ['5 of 5 · What can’t go wrong?', 'The one moment that has to land. We build the plan around it.'], text: 'e.g. The keynote walk-on at 7:30', skip: 'Skip' },
+      { key: 'budget', say: ['Last question — a budget range, if you have one?'], chips: ['Under $10k', '$10k–25k', '$25k–50k', '$50k+', 'Not set'] },
+      { key: 'files', say: ['Got a floor plan or run of show? Send it over — or paste a link.'], upload: true },
+      { key: 'answer', say: function () { return ['One quick check to keep the robots out: ' + (challenge ? challenge.question : 'loading…')]; }, text: 'Answer', number: true, required: true },
+      { key: 'confirm', say: function () { return ['Here’s what I’ve got:', summary(), 'Send it to the team?']; }, chips: ['Send it', 'Start over'] }
+    ];
+
+    function first(n) { return String(n || '').trim().split(/\s+/)[0]; }
+
+    function summary() {
+      var rows = [
+        ['Name', answers.name + (answers.organization ? ', ' + answers.organization : '')],
+        ['Reach you at', answers.contact],
+        ['People', [answers.headcount, answers.headcountIs && answers.headcountIs.toLowerCase()].filter(Boolean).join(' · ')],
+        ['Where', [answers.venue, answers.setting].filter(Boolean).join(' · ')],
+        ['When', [answers.showTime, answers.loadIn && 'in ' + answers.loadIn, answers.outBy && 'out by ' + answers.outBy].filter(Boolean).join(' · ')],
+        ['See & hear', (answers.seeHear || []).join(', ')],
+        ['Can’t go wrong', answers.mustLand],
+        ['Budget', answers.budget],
+        ['Files', files.filter(function (f) { return !f.error; }).map(function (f) { return f.file.name; }).concat(answers.links ? [answers.links] : []).join(', ')]
+      ].filter(function (r) { return r[1]; });
+      return { html: '<dl class="bot-summary">' + rows.map(function (r) { return '<dt>' + esc(r[0]) + '</dt><dd>' + esc(r[1]) + '</dd>'; }).join('') + '</dl>' };
+    }
+
+    function build() {
+      panel = document.createElement('dialog');
+      panel.className = 'bot';
+      panel.setAttribute('aria-label', 'Planning bot: 5 things we need to know about your event');
+      panel.innerHTML =
+        '<div class="bot-head"><div><strong>5 things we need to know about your event</strong><span>' + SITE + ' · rough answers are fine</span></div>' +
+          '<button type="button" class="bot-message">Just send a message</button>' +
+          '<button type="button" class="bot-restart" aria-label="Start over"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10a6 6 0 1 0 2-4.5M4 3v3.5h3.5" fill="none" stroke="currentColor" stroke-width="2"/></svg></button>' +
+          '<button type="button" class="bot-close" aria-label="Close"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 3l12 12M15 3L3 15" stroke="currentColor" stroke-width="2"/></svg></button></div>' +
+        '<div class="bot-log" role="log" aria-live="polite"></div>' +
+        '<div class="bot-chips"></div>' +
+        '<form class="bot-entry" novalidate><input type="text" aria-label="Your answer" autocomplete="off"><button type="submit" class="bot-send" aria-label="Send"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 10h13M11 5l5 5-5 5" fill="none" stroke="currentColor" stroke-width="2.2"/></svg></button></form>' +
+        '<input type="file" class="bot-file" multiple accept="' + ACCEPT + '" hidden>';
+      document.body.appendChild(panel);
+      log = panel.querySelector('.bot-log');
+      chips = panel.querySelector('.bot-chips');
+      entry = panel.querySelector('.bot-entry');
+      input = entry.querySelector('input');
+      sendBtn = entry.querySelector('.bot-send');
+
+      panel.querySelector('.bot-close').addEventListener('click', function () { panel.close(); });
+      panel.querySelector('.bot-restart').addEventListener('click', start);
+      panel.addEventListener('close', function () {
+        document.documentElement.classList.remove('bot-open');
+        if (location.hash === '#talk' || location.hash === '#quote') history.replaceState(null, '', location.pathname + location.search);
+        if (opener) opener.focus();
+      });
+      panel.querySelector('.bot-message').addEventListener('click', toMessage);
+      entry.addEventListener('submit', function (e) { e.preventDefault(); if (!busy && input.value.trim()) reply(input.value.trim()); });
+      panel.querySelector('.bot-file').addEventListener('change', function (e) {
+        var before = files.length;
+        addFiles(files, e.target.files);
+        e.target.value = '';
+        var added = files.slice(before);
+        if (!added.length) return;
+        userSays(added.map(function (f) { return '📎 ' + f.file.name + (f.error ? ' — ' + f.state : ''); }).join('\n'));
+        botSays(['Got ' + (added.filter(function (f) { return !f.error; }).length || 'none of') + ' ' + (added.length === 1 ? 'it' : 'them') + '. Anything else?'], function () { showStepInputs(SCRIPT[step]); });
+      });
+    }
+
+    function bubble(who, content) {
+      var b = document.createElement('div');
+      b.className = 'msg from-' + who;
+      if (content && content.html) b.innerHTML = content.html; else b.textContent = content;
+      log.appendChild(b);
+      log.scrollTop = log.scrollHeight;
+      return b;
+    }
+
+    function userSays(text) { bubble('me', text); }
+
+    // Switch to the simple contact form, keeping whatever the visitor clicked from.
+    function toMessage() {
+      var from = opener;
+      opener = null;
+      panel.close();
+      getForm('inquiry').open(from, prefillNow);
+    }
+
+    // Bot lines appear one after another with a short typing pause.
+    function botSays(lines, then) {
+      busy = true;
+      chips.innerHTML = '';
+      var i = 0;
+      var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+      (function next() {
+        if (i >= lines.length) { busy = false; if (then) then(); return; }
+        var typing = bubble('bot typing', { html: '<span></span><span></span><span></span>' });
+        setTimeout(function () { typing.remove(); bubble('bot', lines[i++]); next(); }, reduce ? 0 : 450);
+      })();
+    }
+
+    function chip(label, cls, fn) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'chip-btn' + (cls ? ' ' + cls : '');
+      b.textContent = label;
+      b.addEventListener('click', fn);
+      chips.appendChild(b);
+      return b;
+    }
+
+    function showStepInputs(s) {
+      chips.innerHTML = '';
+      var textMode = !!s.text;
+      entry.hidden = !textMode && !s.upload;
+      input.value = '';
+      input.type = s.number ? 'number' : 'text';
+      input.inputMode = s.number ? 'numeric' : 'text';
+      input.placeholder = s.upload ? 'Paste a link, or tap Add files' : (s.text || '');
+      if (s.chips) s.chips.forEach(function (c) { chip(c, c === 'Send it' ? 'primary' : '', function () { reply(c); }); });
+      if (s.multi) {
+        var picked = [];
+        s.multi.forEach(function (c) {
+          var b = chip(c, 'toggle', function () {
+            var on = picked.indexOf(c) === -1;
+            if (on) picked.push(c); else picked.splice(picked.indexOf(c), 1);
+            b.setAttribute('aria-pressed', on ? 'true' : 'false');
+          });
+          b.setAttribute('aria-pressed', (answers.preSeeHear || []).indexOf(c) !== -1 ? (picked.push(c), 'true') : 'false');
+        });
+        chip('Done', 'primary', function () { reply(picked.length ? picked.slice() : ['Not sure yet']); });
+      }
+      if (s.upload) {
+        chip('Add files', 'primary', function () { panel.querySelector('.bot-file').click(); });
+        chip(files.length ? 'That’s everything' : 'Nothing to send', '', function () { reply(input.value.trim() || ''); });
+      }
+      if (s.skip) chip(s.skip, 'ghost', function () { reply(null); });
+      if (step === 0) chip('Just send a message instead', 'ghost', toMessage);
+      if (textMode || s.upload) input.focus(); else { var firstChip = chips.querySelector('button'); if (firstChip) firstChip.focus(); }
+    }
+
+    function reply(value) {
+      var s = SCRIPT[step];
+      var shown = value === null ? s.skip : Array.isArray(value) ? value.join(', ') : value;
+      if (s.upload && !value) shown = files.length ? 'That’s everything.' : 'Nothing to send.';
+      if (shown) userSays(shown);
+      if (s.check && value) {
+        var problem = s.check(value);
+        if (problem) return botSays([problem], function () { showStepInputs(s); });
+      }
+      if (s.key === 'confirm') return value === 'Send it' ? send() : start();
+      if (s.upload) { if (value) answers.links = value; }
+      else answers[s.key] = value === null ? '' : value;
+      step++;
+      ask();
+    }
+
+    function ask() {
+      while (SCRIPT[step] && SCRIPT[step].when && !SCRIPT[step].when()) step++;
+      var s = SCRIPT[step];
+      var lines = typeof s.say === 'function' ? s.say() : s.say;
+      botSays(lines, function () { showStepInputs(s); });
+    }
+
+    function send() {
+      entry.hidden = true;
+      var contact = answers.contact || '';
+      var payload = {
+        site: SITE, channel: '5-things bot', eventType: answers.eventType || '',
+        name: answers.name, email: /@/.test(contact) ? contact : '', phone: /@/.test(contact) ? '' : contact,
+        organization: answers.organization, headcount: answers.headcount, headcountIs: answers.headcountIs,
+        venue: answers.venue, setting: answers.setting, showTime: answers.showTime, loadIn: answers.loadIn, outBy: answers.outBy,
+        seeHear: answers.seeHear || [], mustLand: answers.mustLand, budget: answers.budget, links: answers.links || '',
+        details: answers.details || '', page: location.href, website: '',
+        answer: answers.answer, ts: challenge && challenge.ts, token: challenge && challenge.token
+      };
+      var status = null;
+      botSays(['Sending…'], function () {
+        status = log.lastChild;
+        submit('inquiry', payload, files, function () {
+          var up = files.filter(function (f) { return f.state === 'Uploading…'; })[0];
+          if (up && status) status.textContent = 'Uploading ' + up.file.name + '…';
+        }).then(function () {
+          if (status) status.remove();
+          botSays(['Got it, ' + first(answers.name) + ' — it’s with our team. The people who will plan and run it will reply within one business day.', 'If it’s urgent, call ' + PHONE + '.'], function () {
+            chip('Close', 'primary', function () { panel.close(); });
+            chip('Start another', '', start);
+          });
+        }).catch(function (err) {
+          if (status) status.remove();
+          var msg = err && err.message ? err.message : 'Something went wrong.';
+          if (/answer|check|time/i.test(msg)) {
+            // Wrong answer or timing: fetch a fresh question and ask again.
+            getChallenge('inquiry').then(function (c) { challenge = c; }, function () {}).then(function () {
+              step = SCRIPT.map(function (x) { return x.key; }).indexOf('answer');
+              botSays([msg], ask);
+            });
+          } else {
+            botSays([msg + ' You can also email ' + EMAIL + ' or call ' + PHONE + '.'], function () {
+              chip('Try again', 'primary', send);
+            });
+          }
+        });
+      });
+    }
+
+    // Restarting (or "Start another") keeps what the visitor clicked from, e.g. a truck booking.
+    function start(prefill) {
+      prefill = prefill && prefill.eventType ? prefill : (prefillNow || {});
+      prefillNow = prefill;
+      answers = { eventType: prefill.eventType || '', details: prefill.details || '', preSeeHear: prefill.seeHear ? [prefill.seeHear] : [] };
+      files = [];
+      step = 0;
+      log.innerHTML = '';
+      challenge = null;
+      getChallenge('inquiry').then(function (c) { challenge = c; }, function () {});
+      ask();
+    }
+
+    function open(from, prefill) {
+      if (!panel) build();
+      opener = from || null;
+      document.documentElement.classList.add('bot-open');
+      panel.showModal();
+      if (!answers || (prefill && prefill.eventType)) { prefillNow = null; start(prefill); }
+      else showStepInputs(SCRIPT[step]);
+    }
+
+    return { open: open };
+  })();
+
+  // ---------- wire up links ----------
 
   function subjectOf(a) {
     return decodeURIComponent(((a.getAttribute('href') || '').match(/subject=([^&]*)/) || [])[1] || '');
@@ -401,7 +570,7 @@
     a.addEventListener('click', function (e) {
       if (e.metaKey || e.ctrlKey || e.shiftKey) return;
       e.preventDefault();
-      if (careers) return get('careers').open(a);
+      if (careers) return getForm('careers').open(a);
       var prefill = {};
       if (isLed || /LED|truck|booking/i.test(subject)) {
         prefill.eventType = 'LED truck rental';
@@ -409,10 +578,11 @@
         var rig = subject.replace(/\s*booking$/i, '');
         if (rig && !/^LED truck$/i.test(rig)) prefill.details = 'Interested in: ' + rig;
       }
-      get('inquiry').open(a, prefill);
+      bot.open(a, prefill);
     });
   });
 
-  if (location.hash === '#talk' || location.hash === '#inquiry') get('inquiry').open();
-  if (location.hash === '#careers') get('careers').open();
+  if (location.hash === '#talk' || location.hash === '#quote') bot.open();
+  if (location.hash === '#message') getForm('inquiry').open();
+  if (location.hash === '#careers') getForm('careers').open();
 })();

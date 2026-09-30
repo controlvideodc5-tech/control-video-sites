@@ -24,8 +24,12 @@ GitHub Pages serves `main` at https://controlvideodc5-tech.github.io/control-vid
 
 Netlify: site `control-video-review` — connect this repo in **Project configuration → Build & deploy → Link repository**. No build command; publish directory is the repo root.
 
-## Forms (Let's talk + Careers)
-Buttons that used to open email ("Let’s talk", "Start a project", "Email us", "Book a truck", rig cards) open a full-screen, one-question-per-screen project form that follows the printed "5 things we need to know about your event" sheet (`assets/control-video-5-things.pdf`, also downloadable from the form): contact (email or phone), how many people, where, when, what the audience should see and hear, and what can’t go wrong, plus budget and files; any "Careers" link opens a separate candidate form (name, email, phone, role, about, résumé). Both accept file uploads (up to 10 files, 5 MB each) plus a link for anything larger. Plain email-address links still open email.
+## Forms: 5-things bot, contact form, Careers
+- **5-things bot** — every project call to action ("Let’s talk", "Start a project", "Email us", "Book a truck", rig cards) opens a full-screen chat that asks the questions from the printed "5 things we need to know about your event" sheet (`assets/control-video-5-things.pdf`) one at a time: how many people, where, when, what the audience should see and hear, and what can’t go wrong, plus budget and files. Truck cards pre-fill the rig. `#talk` or `#quote` in the URL opens it.
+- **Contact form** — the bot’s “Just send a message” button switches to a short form (name, email, phone, date, message, files). `#message` opens it.
+- **Careers** — any "Careers" link opens a separate candidate form (name, email, phone, role, about, résumé). `#careers` opens it.
+
+Plain email-address links still open email. Uploads: up to 10 files, 5 MB each, plus a link for anything larger.
 
 Submissions go through `netlify/functions/forms.mjs` into the Airtable base **Control Video — Inquiries**:
 
