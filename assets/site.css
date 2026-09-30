@@ -65,9 +65,11 @@ h1,h2,h3,p,figure,blockquote{margin:0}
 .btn-primary:hover{background:var(--red-hover)}
 .btn-ghost{border:1px solid var(--ghost)}
 .btn-ghost:hover{border-color:var(--fg)}
-/* Header "Let's talk": dark glass on the Control Video (dark) pages */
-body:not(.light) .nav .btn-primary{background:rgba(8,8,12,0.5);border:1px solid rgba(255,255,255,0.25);color:#fff;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
-body:not(.light) .nav .btn-primary:hover{background:rgba(8,8,12,0.75);border-color:rgba(255,255,255,0.45)}
+/* Header call to action ("Start a project" / "Book a truck"): dark glass */
+.nav .btn-primary{background:rgba(8,8,12,0.5);border:1px solid rgba(255,255,255,0.25);color:#fff;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.nav .btn-primary:hover{background:rgba(8,8,12,0.75);border-color:rgba(255,255,255,0.45)}
+body.light .nav .btn-primary{background:rgba(8,8,12,0.82);border-color:transparent}
+body.light .nav .btn-primary:hover{background:rgba(8,8,12,0.95)}
 .over .btn-ghost,.hero .btn-ghost{border-color:rgba(255,255,255,0.5);color:#fff}
 .btn-row{display:flex;flex-wrap:wrap;gap:12px}
 .link-arrow{font-size:13px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase}
@@ -94,8 +96,8 @@ body:not(.light) .nav .btn-primary:hover{background:rgba(8,8,12,0.75);border-col
 .hero .lede{color:#D6D6DD}
 .hero-title{display:flex;align-items:flex-end;flex-wrap:wrap;gap:clamp(20px, 2.5vw, 36px)}
 .hero-title .btn{margin-bottom:clamp(4px, 0.8vw, 12px)}
-.hero-body.stack{flex-direction:column;align-items:flex-start;gap:24px}
-.hero-body.stack .side{width:auto;max-width:560px;margin-bottom:0}
+.hero-body.stack,.intro.stack{flex-direction:column;align-items:flex-start;gap:24px}
+.hero-body.stack .side,.intro.stack .side{width:auto;max-width:560px;margin-bottom:0}
 
 /* Plain intro (no background image) */
 .intro{padding-block:clamp(40px, 5vw, 72px) 0;display:flex;justify-content:space-between;align-items:flex-end;gap:clamp(28px, 4.45vw, 64px)}
