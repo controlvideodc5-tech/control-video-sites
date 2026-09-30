@@ -45,7 +45,7 @@
 
 // Contact forms and the "5 things" bot. All three post to the Netlify function
 // (netlify/functions/forms.mjs), which saves to Airtable:
-//   - 5-things bot: every project call-to-action ("Let's talk", "Start a project", "Book a truck"…)
+//   - 5-things bot: every project call-to-action ("Start a project", "Start a booking", rig cards…)
 //   - Simple contact form: reached from the bot ("Just send a message")
 //   - Careers form: any link whose subject is "Careers"
 // Without JS the CTA links still work as plain mailto links.
@@ -359,7 +359,7 @@
       panel.className = 'bot';
       panel.setAttribute('aria-label', 'Planning bot: 5 things we need to know about your event');
       panel.innerHTML =
-        '<div class="bot-head"><div><strong>5 things we need to know about your event</strong><span>' + SITE + ' · rough answers are fine</span></div>' +
+        '<div class="bot-head"><div><strong><span class="long">5 things we need to know about your event</span><span class="short">5 things about your event</span></strong><span class="sub">' + SITE + ' · rough answers are fine</span></div>' +
           '<button type="button" class="bot-message">Just send a message</button>' +
           '<button type="button" class="bot-restart" aria-label="Start over"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10a6 6 0 1 0 2-4.5M4 3v3.5h3.5" fill="none" stroke="currentColor" stroke-width="2"/></svg></button>' +
           '<button type="button" class="bot-close" aria-label="Close"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 3l12 12M15 3L3 15" stroke="currentColor" stroke-width="2"/></svg></button></div>' +
