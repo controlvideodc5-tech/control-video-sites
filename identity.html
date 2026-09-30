@@ -2,95 +2,182 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Control Video — Identity system</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
+<title>Control Video — Identity system</title>
+<meta name="description" content="The Control Video identity system: the mark, typeface, type scale, color and components.">
+<link rel="preload" href="assets/sora-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/site.css">
+<style>
+/* Identity page */
+.id-head{display:flex;flex-direction:column;gap:clamp(36px, 3.9vw, 56px)}
+.mark-card{border-radius:24px;gap:20px}
+.mark-card.in-use{border-color:rgba(227,38,43,0.7)}
+.mark-card .art{height:clamp(180px, 18vw, 260px);display:flex;align-items:center;justify-content:center}
+.mark-card .art svg{width:128px;height:128px}
+.lockup{min-height:clamp(160px, 16.7vw, 240px);padding:24px;border-radius:24px;background:var(--panel);display:flex;align-items:center;justify-content:center;gap:clamp(12px, 1.25vw, 18px);color:#FFFFFF}
+.lockup.paper{background:#FFFFFF;color:#08080C}
+.lockup svg{width:clamp(36px, 3.9vw, 56px);height:auto;flex-shrink:0}
+.lockup span{font-size:clamp(28px, 3.05vw, 44px);font-weight:600;letter-spacing:-0.02em;white-space:nowrap}
+
+.specimens{display:flex;flex-direction:column;border-top:1px solid var(--line)}
+.spec-row{padding:28px 0;border-bottom:1px solid var(--line);display:grid;grid-template-columns:repeat(12, minmax(0, 1fr));gap:var(--gap);align-items:center}
+.spec-row .label{grid-column:span 3;font-size:13px;color:var(--muted)}
+.spec-row .sample{grid-column:span 9;font-weight:600;letter-spacing:-0.02em;overflow-wrap:break-word}
+.spec-row .s-hero{font-size:clamp(48px, 7.8vw, 112px);line-height:0.95;font-weight:700;text-transform:uppercase}
+.spec-row .s-section{font-size:clamp(32px, 4.45vw, 64px);line-height:1.02}
+.spec-row .s-panel{font-size:clamp(28px, 3.3vw, 48px);line-height:1.05}
+.spec-row .s-card{font-size:clamp(21px, 1.8vw, 26px);line-height:1.2;letter-spacing:0}
+.spec-row .s-body{grid-column:span 6;font-size:16px;line-height:1.6;font-weight:400;letter-spacing:0;color:var(--muted)}
+
+.id-bottom{align-items:start}
+.id-panel{padding:clamp(24px, 2.8vw, 40px);border-radius:24px;gap:28px}
+.swatches{display:grid;grid-template-columns:repeat(4, minmax(0, 1fr));gap:16px}
+.swatch{display:flex;flex-direction:column;gap:10px}
+.swatch .chipcolor{height:96px;border-radius:12px}
+.c-ink{background:#08080C}.c-panelc{background:#121218}.c-white{background:#FFFFFF}.c-red{background:#E3262B}
+.swatch .chipcolor.edged{border:1px solid rgba(255,255,255,0.14)}
+.swatch .name{font-size:14px;font-weight:600}
+.swatch .hex{font-size:13px;color:var(--muted)}
+.comp-row{display:flex;flex-wrap:wrap;align-items:center;gap:12px}
+.comp-row.tight{gap:8px}
+.comp-row .tag{position:static}
+.comp-row .chip{background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.14)}
+.id-panel .note{font-size:14px;line-height:1.6;color:var(--muted)}
+
+@media (max-width:760px){
+  .spec-row{grid-template-columns:1fr;gap:10px;padding:24px 0}
+  .spec-row .label,.spec-row .sample,.spec-row .s-body{grid-column:1}
+}
+@media (max-width:600px){
+  .swatches{grid-template-columns:repeat(2, minmax(0, 1fr))}
+  .swatch .chipcolor{height:80px}
+}
+@media (max-width:420px){
+  .spec-row .s-hero{font-size:clamp(40px, 13vw, 48px)}
+  .spec-row .s-section{font-size:clamp(28px, 8.5vw, 32px)}
+  .spec-row .s-panel{font-size:clamp(24px, 7.5vw, 28px)}
+}
+</style>
 </head>
 <body>
-<x-dc>
+<a class="skip" href="#main">Skip to content</a>
 
-<style>
-@font-face{font-family:'Sora';src:url('assets/sora-latin-wght-normal.woff2') format('woff2');font-weight:100 800;font-display:swap}
-body{margin:0;background:#08080C}x-dc{display:block}x-dc>div{margin:0 auto}html,body{overflow-x:hidden}
-a{color:inherit}a:hover{color:inherit}
-</style>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="home.html" aria-label="Control Video home"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M24.5 7.5 A12 12 0 1 0 24.5 24.5" fill="none" stroke="currentColor" stroke-width="4.6"/><path d="M13 10.2 L23 16 L13 21.8 Z" fill="#E3262B"/></svg><span>Control Video</span></a>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Menu"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M2 5h16M2 10h16M2 15h16" stroke="currentColor" stroke-width="2" fill="none"/></svg></button>
+    <nav class="nav" id="site-nav" aria-label="Main">
+      <a href="work.html">Work</a>
+      <a href="events.html">Events</a>
+      <a href="technology.html">Technology</a>
+      <a class="btn btn-sm btn-primary" href="mailto:hello@controlvideo.com">Let’s talk</a>
+    </nav>
+  </div>
+</header>
 
-<div style="width: 1440px; height: 2320px; background: #08080C; color: #FFFFFF; font-family: Sora, system-ui, sans-serif; display: flex; flex-direction: column">
+<main id="main">
 
-<section style="padding: 96px 64px; display: flex; flex-direction: column; gap: 48px">
-<div style="display: flex; justify-content: space-between; align-items: flex-end; gap: 64px">
-<h2 style="margin: 0; font-size: 64px; line-height: 1.02; letter-spacing: -0.02em; font-weight: 600">A mark that says the name</h2>
-<p style="margin: 0; width: 420px; font-size: 16px; line-height: 1.6; color: #A6A6B0">Three directions, each hinting at Control and Video. C is applied across the site.</p>
-</div>
-<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px">
-<div style="padding: 32px; background: #121218; border: 1px solid rgba(255,255,255,0.08); border-radius: 24px; display: flex; flex-direction: column; gap: 20px">
-<div style="height: 260px; display: flex; align-items: center; justify-content: center"><svg width="128" height="128" viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="8.5" width="23" height="17" rx="2.5" fill="none" stroke="#FFFFFF" stroke-width="3.2"></rect><circle cx="26" cy="8.5" r="4.2" fill="#E3262B"></circle></svg></div>
-<div style="font-size: 13px; font-weight: 600; letter-spacing: 0.08em; color: #E3262B">A</div>
-<div style="font-size: 26px; line-height: 1.2; font-weight: 600">Frame and tally</div>
-<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #A6A6B0">A screen with the red light that means a camera is live.</p>
-</div>
-<div style="padding: 32px; background: #121218; border: 1px solid rgba(255,255,255,0.08); border-radius: 24px; display: flex; flex-direction: column; gap: 20px">
-<div style="height: 260px; display: flex; align-items: center; justify-content: center"><svg width="128" height="128" viewBox="0 0 32 32" aria-hidden="true"><path d="M14.2 10.4 A7 7 0 1 0 14.2 21.6" fill="none" stroke="#FFFFFF" stroke-width="3.6"></path><path d="M16.5 9 L22.5 23.5 L28.5 9" fill="none" stroke="#E3262B" stroke-width="3.6"></path></svg></div>
-<div style="font-size: 13px; font-weight: 600; letter-spacing: 0.08em; color: #E3262B">B</div>
-<div style="font-size: 26px; line-height: 1.2; font-weight: 600">CV monogram</div>
-<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #A6A6B0">The initials in one stroke weight. The most literal option.</p>
-</div>
-<div style="padding: 32px; background: #121218; border: 1px solid rgba(227,38,43,0.7); border-radius: 24px; display: flex; flex-direction: column; gap: 20px">
-<div style="height: 260px; display: flex; align-items: center; justify-content: center"><svg width="128" height="128" viewBox="0 0 32 32" aria-hidden="true"><path d="M24.5 7.5 A12 12 0 1 0 24.5 24.5" fill="none" stroke="#FFFFFF" stroke-width="4.6"></path><path d="M13 10.2 L23 16 L13 21.8 Z" fill="#E3262B"></path></svg></div>
-<div style="font-size: 13px; font-weight: 600; letter-spacing: 0.08em; color: #E3262B">C · IN USE</div>
-<div style="font-size: 26px; line-height: 1.2; font-weight: 600">Control and play</div>
-<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #A6A6B0">A C holding a play button: control around video. It also reads as C and a turned V.</p>
-</div>
-</div>
-<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px">
-<div style="height: 240px; border-radius: 24px; background: #121218; display: flex; align-items: center; justify-content: center; gap: 18px; color: #FFFFFF"><svg width="56" height="56" viewBox="0 0 32 32" aria-hidden="true"><path d="M24.5 7.5 A12 12 0 1 0 24.5 24.5" fill="none" stroke="currentColor" stroke-width="4.6"></path><path d="M13 10.2 L23 16 L13 21.8 Z" fill="#E3262B"></path></svg><span style="font-size: 44px; font-weight: 600; letter-spacing: -0.02em">Control Video</span></div>
-<div style="height: 240px; border-radius: 24px; background: #FFFFFF; display: flex; align-items: center; justify-content: center; gap: 18px; color: #08080C"><svg width="56" height="56" viewBox="0 0 32 32" aria-hidden="true"><path d="M24.5 7.5 A12 12 0 1 0 24.5 24.5" fill="none" stroke="currentColor" stroke-width="4.6"></path><path d="M13 10.2 L23 16 L13 21.8 Z" fill="#E3262B"></path></svg><span style="font-size: 44px; font-weight: 600; letter-spacing: -0.02em">Control Video</span></div>
-</div>
+<section class="sec">
+  <div class="wrap">
+    <div class="id-head">
+      <h1 class="title">Identity system</h1>
+      <div class="sec-head">
+        <h2 class="title">A mark that says the name</h2>
+        <p>Three directions, each hinting at Control and Video. C is applied across the site.</p>
+      </div>
+    </div>
+    <div class="grid cols-3">
+      <div class="panel bordered mark-card">
+        <div class="art"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="8.5" width="23" height="17" rx="2.5" fill="none" stroke="#FFFFFF" stroke-width="3.2"/><circle cx="26" cy="8.5" r="4.2" fill="#E3262B"/></svg></div>
+        <div class="num">A</div>
+        <h3 class="h3">Frame and tally</h3>
+        <p>A screen with the red light that means a camera is live.</p>
+      </div>
+      <div class="panel bordered mark-card">
+        <div class="art"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M14.2 10.4 A7 7 0 1 0 14.2 21.6" fill="none" stroke="#FFFFFF" stroke-width="3.6"/><path d="M16.5 9 L22.5 23.5 L28.5 9" fill="none" stroke="#E3262B" stroke-width="3.6"/></svg></div>
+        <div class="num">B</div>
+        <h3 class="h3">CV monogram</h3>
+        <p>The initials in one stroke weight. The most literal option.</p>
+      </div>
+      <div class="panel bordered mark-card in-use">
+        <div class="art"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M24.5 7.5 A12 12 0 1 0 24.5 24.5" fill="none" stroke="#FFFFFF" stroke-width="4.6"/><path d="M13 10.2 L23 16 L13 21.8 Z" fill="#E3262B"/></svg></div>
+        <div class="num">C · IN USE</div>
+        <h3 class="h3">Control and play</h3>
+        <p>A C holding a play button: control around video. It also reads as C and a turned V.</p>
+      </div>
+    </div>
+    <div class="grid cols-2">
+      <div class="lockup"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M24.5 7.5 A12 12 0 1 0 24.5 24.5" fill="none" stroke="currentColor" stroke-width="4.6"/><path d="M13 10.2 L23 16 L13 21.8 Z" fill="#E3262B"/></svg><span>Control Video</span></div>
+      <div class="lockup paper"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M24.5 7.5 A12 12 0 1 0 24.5 24.5" fill="none" stroke="currentColor" stroke-width="4.6"/><path d="M13 10.2 L23 16 L13 21.8 Z" fill="#E3262B"/></svg><span>Control Video</span></div>
+    </div>
+  </div>
 </section>
 
-<section style="padding: 0 64px 96px; display: flex; flex-direction: column; gap: 48px">
-<div style="display: flex; justify-content: space-between; align-items: flex-end; gap: 64px">
-<h2 style="margin: 0; font-size: 64px; line-height: 1.02; letter-spacing: -0.02em; font-weight: 600">One typeface, one voice</h2>
-<p style="margin: 0; width: 420px; font-size: 16px; line-height: 1.6; color: #A6A6B0">Sora throughout. Uppercase only for hero lines, calls to action and tags.</p>
-</div>
-<div style="display: flex; flex-direction: column; border-top: 1px solid rgba(255,255,255,0.1)">
-<div style="padding: 28px 0; border-bottom: 1px solid rgba(255,255,255,0.1); display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 24px; align-items: center"><span style="grid-column: span 3; font-size: 13px; color: #A6A6B0">Hero · 112 · Bold · Caps</span><span style="grid-column: span 9; font-size: 112px; line-height: 0.95; letter-spacing: -0.02em; font-weight: 700; text-transform: uppercase">Your show.</span></div>
-<div style="padding: 28px 0; border-bottom: 1px solid rgba(255,255,255,0.1); display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 24px; align-items: center"><span style="grid-column: span 3; font-size: 13px; color: #A6A6B0">Section · 64 · Semibold</span><span style="grid-column: span 9; font-size: 64px; line-height: 1.02; letter-spacing: -0.02em; font-weight: 600">The events we’re built for</span></div>
-<div style="padding: 28px 0; border-bottom: 1px solid rgba(255,255,255,0.1); display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 24px; align-items: center"><span style="grid-column: span 3; font-size: 13px; color: #A6A6B0">Panel · 48 · Semibold</span><span style="grid-column: span 9; font-size: 48px; line-height: 1.05; letter-spacing: -0.02em; font-weight: 600">Galas &amp; conferences</span></div>
-<div style="padding: 28px 0; border-bottom: 1px solid rgba(255,255,255,0.1); display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 24px; align-items: center"><span style="grid-column: span 3; font-size: 13px; color: #A6A6B0">Card · 26 · Semibold</span><span style="grid-column: span 9; font-size: 26px; line-height: 1.2; font-weight: 600">One image, a mile wide</span></div>
-<div style="padding: 28px 0; border-bottom: 1px solid rgba(255,255,255,0.1); display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 24px; align-items: center"><span style="grid-column: span 3; font-size: 13px; color: #A6A6B0">Body · 16 · Regular</span><span style="grid-column: span 6; font-size: 16px; line-height: 1.6; color: #A6A6B0">We join your team early, shape the plan with you, then own the build and the show.</span></div>
-</div>
+<section class="sec flush-top">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2 class="title">One typeface, one voice</h2>
+      <p>Sora throughout. Uppercase only for hero lines, calls to action and tags.</p>
+    </div>
+    <div class="specimens">
+      <div class="spec-row"><span class="label">Hero · 112 · Bold · Caps</span><span class="sample s-hero">Your show.</span></div>
+      <div class="spec-row"><span class="label">Section · 64 · Semibold</span><span class="sample s-section">The events we’re built for</span></div>
+      <div class="spec-row"><span class="label">Panel · 48 · Semibold</span><span class="sample s-panel">Galas &amp; conferences</span></div>
+      <div class="spec-row"><span class="label">Card · 26 · Semibold</span><span class="sample s-card">One image, a mile wide</span></div>
+      <div class="spec-row"><span class="label">Body · 16 · Regular</span><span class="sample s-body">We join your team early, shape the plan with you, then own the build and the show.</span></div>
+    </div>
+  </div>
 </section>
 
-<section style="flex-grow: 1; padding: 0 64px 96px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; align-items: start">
-<div style="padding: 40px; background: #121218; border: 1px solid rgba(255,255,255,0.08); border-radius: 24px; display: flex; flex-direction: column; gap: 28px">
-<div style="font-size: 26px; font-weight: 600">Color</div>
-<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px">
-<div style="display: flex; flex-direction: column; gap: 10px"><div style="height: 96px; border-radius: 12px; background: #08080C; border: 1px solid rgba(255,255,255,0.14)"></div><span style="font-size: 14px; font-weight: 600">Ink</span><span style="font-size: 13px; color: #A6A6B0">#08080C</span></div>
-<div style="display: flex; flex-direction: column; gap: 10px"><div style="height: 96px; border-radius: 12px; background: #121218; border: 1px solid rgba(255,255,255,0.14)"></div><span style="font-size: 14px; font-weight: 600">Panel</span><span style="font-size: 13px; color: #A6A6B0">#121218</span></div>
-<div style="display: flex; flex-direction: column; gap: 10px"><div style="height: 96px; border-radius: 12px; background: #FFFFFF"></div><span style="font-size: 14px; font-weight: 600">White</span><span style="font-size: 13px; color: #A6A6B0">#FFFFFF</span></div>
-<div style="display: flex; flex-direction: column; gap: 10px"><div style="height: 96px; border-radius: 12px; background: #E3262B"></div><span style="font-size: 14px; font-weight: 600">Tally red</span><span style="font-size: 13px; color: #A6A6B0">#E3262B</span></div>
-</div>
-</div>
-<div style="padding: 40px; background: #121218; border: 1px solid rgba(255,255,255,0.08); border-radius: 24px; display: flex; flex-direction: column; gap: 28px">
-<div style="font-size: 26px; font-weight: 600">Components</div>
-<div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center">
-<span style="height: 52px; padding: 0 26px; display: flex; align-items: center; background: #E3262B; border-radius: 999px; font-size: 14px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase">Start a project</span>
-<span style="height: 52px; padding: 0 26px; display: flex; align-items: center; border: 1px solid rgba(255,255,255,0.5); border-radius: 999px; font-size: 14px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase">See the work</span>
-</div>
-<div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center">
-<span style="padding: 6px 12px; border-radius: 999px; background: rgba(8,8,12,0.72); border: 1px solid rgba(255,255,255,0.18); font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase">Festival</span>
-<span style="padding: 8px 14px; border-radius: 999px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); font-size: 12px; font-weight: 600; letter-spacing: 0.04em">Large-format LED</span>
-<span style="font-size: 13px; font-weight: 600; letter-spacing: 0.08em; color: #E3262B">01</span>
-</div>
-<div style="font-size: 14px; line-height: 1.6; color: #A6A6B0">Images: 16px corners. Panels: 24px corners. Red is for the mark, the primary button and step numbers only.</div>
-</div>
+<section class="sec flush-top">
+  <div class="wrap">
+    <div class="split-even id-bottom">
+      <div class="panel bordered id-panel">
+        <h3 class="h3">Color</h3>
+        <div class="swatches">
+          <div class="swatch"><div class="chipcolor edged c-ink"></div><span class="name">Ink</span><span class="hex">#08080C</span></div>
+          <div class="swatch"><div class="chipcolor edged c-panelc"></div><span class="name">Panel</span><span class="hex">#121218</span></div>
+          <div class="swatch"><div class="chipcolor c-white"></div><span class="name">White</span><span class="hex">#FFFFFF</span></div>
+          <div class="swatch"><div class="chipcolor c-red"></div><span class="name">Tally red</span><span class="hex">#E3262B</span></div>
+        </div>
+      </div>
+      <div class="panel bordered id-panel">
+        <h3 class="h3">Components</h3>
+        <div class="comp-row">
+          <span class="btn btn-primary">Start a project</span>
+          <span class="btn btn-ghost">See the work</span>
+        </div>
+        <div class="comp-row tight">
+          <span class="tag">Festival</span>
+          <span class="chip">Large-format LED</span>
+          <span class="num">01</span>
+        </div>
+        <p class="note">Images: 16px corners. Panels: 24px corners. Red is for the mark, the primary button and step numbers only.</p>
+      </div>
+    </div>
+  </div>
 </section>
 
-</div>
-</x-dc>
-<script>
-(function(){function fit(){var r=document.querySelector('x-dc>div');if(!r)return;r.style.zoom=Math.min(1.25,document.documentElement.clientWidth/1440);}fit();window.addEventListener('resize',fit);})();
-</script>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a class="brand" href="home.html" aria-label="Control Video home"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M24.5 7.5 A12 12 0 1 0 24.5 24.5" fill="none" stroke="currentColor" stroke-width="4.6"/><path d="M13 10.2 L23 16 L13 21.8 Z" fill="#E3262B"/></svg><span>Control Video</span></a>
+        <p class="muted" style="font-size:14px">Live event production · Brentwood, MD · Since 2015</p>
+      </div>
+      <nav class="footer-links" aria-label="Footer">
+        <div><a href="work.html">Work</a><a href="events.html">Events</a><a href="technology.html">Technology</a></div>
+        <div><a href="tel:+13012773429">(301) 277-3429</a><a href="mailto:hello@controlvideo.com">hello@controlvideo.com</a></div>
+        <div><a href="mailto:hello@controlvideo.com?subject=Careers">Careers</a><a href="led.html">LED Truck Company ↗</a></div>
+      </nav>
+    </div>
+    <p class="fine">© 2026 Control Video, LLC</p>
+  </div>
+</footer>
+
+<script src="assets/site.js" defer></script>
 </body>
 </html>

@@ -2,118 +2,154 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>LED Truck Co. — Fleet</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-</head>
-<body>
-<x-dc>
-
+<title>LED Truck Co. — Fleet</title>
+<meta name="description" content="Eight mobile LED screens, from 8′ × 15′ to 22′ × 42′. Daylight-readable, set up in as little as 60 minutes and run by senior crews.">
+<link rel="preload" href="assets/sora-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/site.css">
 <style>
-@font-face{font-family:'Sora';src:url('assets/sora-latin-wght-normal.woff2') format('woff2');font-weight:100 800;font-display:swap}
-body{margin:0;background:#FFFFFF}x-dc{display:block}x-dc>div{margin:0 auto}html,body{overflow-x:hidden}
-a{color:inherit}a:hover{color:inherit}
+.fleet-intro{padding-block:clamp(40px, 5vw, 72px) clamp(36px, 3.9vw, 56px)}
+.fleet-intro .side{width:460px}
+.fleet{padding-top:0}
+.fleet>.wrap{gap:clamp(28px, 2.8vw, 40px)}
+.fleet-controls{display:flex;flex-direction:column;gap:12px}
+.fleet .grid{row-gap:56px}
+.rig .media{height:420px;margin-bottom:0}
+.rig-head{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap}
+.rig-head .h3{font-size:26px}
+.rig-head .link-arrow{color:var(--red)}
+.rig .desc{color:var(--muted)}
+.rig-specs{margin:0;border-top:1px solid var(--line);font-size:15px}
+.rig-specs div{display:flex;justify-content:space-between;gap:16px;padding:11px 0;border-bottom:1px solid var(--line)}
+.rig-specs dt{color:var(--muted)}
+.rig-specs dd{margin:0;font-weight:600;text-align:right}
+.footer-brand p{font-size:14px}
+@media (max-width:900px){.rig .media{height:auto;aspect-ratio:16/10}}
+@media (max-width:600px){.fleet .grid{row-gap:40px}.rig-head .h3{font-size:22px}}
 </style>
+</head>
+<body class="light">
+<a class="skip" href="#main">Skip to content</a>
 
-<div style="width: 1440px; height: 4640px; background: #FFFFFF; color: #08080C; font-family: Sora, system-ui, sans-serif; display: flex; flex-direction: column">
-<header style="height: 104px; flex-shrink: 0; padding: 0 64px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(8,8,12,0.1)">
-<a href="led.html" aria-label="LED Truck Company home" style="display: flex; align-items: center; gap: 14px; text-decoration: none"><svg width="44" height="44" viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="5" width="26" height="17" rx="2.5" fill="none" stroke="currentColor" stroke-width="3.2"></rect><path d="M13.2 9.4 L20.4 13.5 L13.2 17.6 Z" fill="#E3262B"></path><circle cx="9" cy="27" r="2.4" fill="currentColor"></circle><circle cx="23" cy="27" r="2.4" fill="currentColor"></circle></svg><span style="font-size: 28px; font-weight: 600; letter-spacing: -0.02em">LED Truck Co.</span></a>
-<nav style="display: flex; align-items: center; gap: 36px; font-size: 15px; font-weight: 500">
-<a href="led-fleet.html" style="text-decoration: underline; text-underline-offset: 8px; text-decoration-thickness: 2px; text-decoration-color: #E3262B">Fleet</a>
-<a href="led.html#events" style="text-decoration: none">Events</a>
-<a href="home.html" style="text-decoration: none">Control Video</a>
-<a href="mailto:hello@controlvideo.com?subject=LED%20truck%20booking" style="height: 44px; padding: 0 22px; display: flex; align-items: center; background: #E3262B; color: #FFFFFF; text-decoration: none; border-radius: 999px; font-size: 13px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase">Book a truck</a>
-</nav>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="led.html" aria-label="LED Truck Company home"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="5" width="26" height="17" rx="2.5" fill="none" stroke="currentColor" stroke-width="3.2"/><path d="M13.2 9.4 L20.4 13.5 L13.2 17.6 Z" fill="#E3262B"/><circle cx="9" cy="27" r="2.4" fill="currentColor"/><circle cx="23" cy="27" r="2.4" fill="currentColor"/></svg><span>LED Truck Co.</span></a>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Menu"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M2 5h16M2 10h16M2 15h16" stroke="currentColor" stroke-width="2" fill="none"/></svg></button>
+    <nav class="nav" id="site-nav" aria-label="Main">
+      <a href="led-fleet.html" aria-current="page">Fleet</a>
+      <a href="led.html#events">Events</a>
+      <a href="home.html">Control Video</a>
+      <a class="btn btn-sm btn-primary" href="mailto:hello@controlvideo.com?subject=LED%20truck%20booking">Book a truck</a>
+    </nav>
+  </div>
 </header>
-<section style="padding: 72px 64px 56px; display: flex; justify-content: space-between; align-items: flex-end; gap: 64px">
-<h1 style="margin: 0; font-size: 112px; line-height: 0.95; letter-spacing: -0.02em; font-weight: 700; text-transform: uppercase">Pick<br>your rig.</h1>
-<p style="margin: 0 0 10px; width: 460px; font-size: 18px; line-height: 1.6; color: #55555F">Eight mobile LED screens, from 8′ × 15′ to 22′ × 42′. Every rig is daylight-readable, sets up in as little as 60 minutes and is run by senior crews.</p>
+
+<main id="main">
+
+<div class="wrap intro fleet-intro">
+  <h1 class="display">Pick<br>your rig.</h1>
+  <div class="side">
+    <p class="lede muted">Eight mobile LED screens, from 8′ × 15′ to 22′ × 42′. Every rig is daylight-readable, sets up in as little as 60 minutes and is run by senior crews.</p>
+  </div>
+</div>
+
+<section class="sec fleet" aria-labelledby="fleet-title">
+  <div class="wrap">
+    <h2 class="visually-hidden" id="fleet-title">The fleet</h2>
+    <div class="fleet-controls">
+      <div class="filters" role="group" aria-label="Filter by format" data-filters="#fleet-grid" data-status="#fleet-status">
+        <button type="button" data-filter="all" aria-pressed="true">All</button>
+        <button type="button" data-filter="tractor-trailer" aria-pressed="false">Tractor-trailer</button>
+        <button type="button" data-filter="truck-mounted" aria-pressed="false">Truck-mounted</button>
+        <button type="button" data-filter="trailer" aria-pressed="false">Trailer</button>
+        <button type="button" data-filter="compact" aria-pressed="false">Compact</button>
+      </div>
+      <p id="fleet-status" class="filter-status" aria-live="polite"></p>
+    </div>
+    <div class="grid cols-2 cards" id="fleet-grid">
+      <a class="card rig" href="mailto:hello@controlvideo.com?subject=Jupiter%20booking" data-cat="tractor-trailer">
+        <div class="media"><img src="assets/rig_jupiter.jpg" alt="Rear of the Jupiter screen towering over a festival crowd"><span class="tag">Tractor-trailer</span></div>
+        <div class="rig-head"><h3 class="h3">Jupiter</h3><span class="link-arrow">Book Jupiter →</span></div>
+        <p class="desc">The largest tractor-trailer mounted screen in North America.</p>
+        <dl class="rig-specs"><div><dt>Screen</dt><dd>22′ × 42′</dd></div><div><dt>Pixel pitch</dt><dd>8mm</dd></div><div><dt>Brightness</dt><dd>7,000 nits</dd></div><div><dt>Viewing distance</dt><dd>35′</dd></div><div><dt>Weight</dt><dd>70,000 lb</dd></div><div><dt>Setup</dt><dd>As little as 60 min</dd></div></dl>
+      </a>
+      <a class="card rig" href="mailto:hello@controlvideo.com?subject=Saturn%20booking" data-cat="tractor-trailer">
+        <div class="media"><img src="assets/rig_saturn.jpg" alt="Saturn screen over a parade route showing a championship graphic"><span class="tag">Tractor-trailer</span></div>
+        <div class="rig-head"><h3 class="h3">Saturn</h3><span class="link-arrow">Book Saturn →</span></div>
+        <p class="desc">Big-crowd screen with an onboard generator and control room.</p>
+        <dl class="rig-specs"><div><dt>Screen</dt><dd>17′ × 32′</dd></div><div><dt>Pixel pitch</dt><dd>8mm</dd></div><div><dt>Brightness</dt><dd>7,000 nits</dd></div><div><dt>Viewing distance</dt><dd>35′</dd></div><div><dt>Weight</dt><dd>63,000 lb</dd></div><div><dt>Setup</dt><dd>As little as 60 min</dd></div></dl>
+      </a>
+      <a class="card rig" href="mailto:hello@controlvideo.com?subject=Neptune%20booking" data-cat="tractor-trailer">
+        <div class="media"><img src="assets/rig_neptune.jpg" alt="Neptune screens flanking a festival main stage at dusk" loading="lazy"><span class="tag">Tractor-trailer</span></div>
+        <div class="rig-head"><h3 class="h3">Neptune</h3><span class="link-arrow">Book Neptune →</span></div>
+        <p class="desc">Full-size screen with an onboard generator and control room.</p>
+        <dl class="rig-specs"><div><dt>Screen</dt><dd>14′ × 24′</dd></div><div><dt>Pixel pitch</dt><dd>8mm</dd></div><div><dt>Brightness</dt><dd>7,000 nits</dd></div><div><dt>Viewing distance</dt><dd>50′</dd></div><div><dt>Weight</dt><dd>51,000 lb</dd></div><div><dt>Setup</dt><dd>As little as 60 min</dd></div></dl>
+      </a>
+      <a class="card rig" href="mailto:hello@controlvideo.com?subject=Ceres%20booking" data-cat="truck-mounted">
+        <div class="media"><img src="assets/rig_ceres.jpg" alt="Ceres screen at sunrise on a lawn showing a thank-you message" loading="lazy"><span class="tag">Truck-mounted</span></div>
+        <div class="rig-head"><h3 class="h3">Ceres</h3><span class="link-arrow">Book Ceres →</span></div>
+        <p class="desc">Mounted on a truck chassis for drive-in, drive-out setups.</p>
+        <dl class="rig-specs"><div><dt>Screen</dt><dd>11′ × 19′</dd></div><div><dt>Pixel pitch</dt><dd>8mm</dd></div><div><dt>Brightness</dt><dd>7,000 nits</dd></div><div><dt>Viewing distance</dt><dd>50′</dd></div><div><dt>Weight</dt><dd>24,000 lb</dd></div><div><dt>Setup</dt><dd>As little as 60 min</dd></div></dl>
+      </a>
+      <a class="card rig" href="mailto:hello@controlvideo.com?subject=Russell%20HD%20booking" data-cat="truck-mounted">
+        <div class="media"><img src="assets/rig_russell.jpg" alt="Russell HD truck screen on a main street showing a group photo" loading="lazy"><span class="tag">Truck-mounted</span></div>
+        <div class="rig-head"><h3 class="h3">Russell HD</h3><span class="link-arrow">Book Russell HD →</span></div>
+        <p class="desc">Drive-in, drive-out screen on a truck chassis.</p>
+        <dl class="rig-specs"><div><dt>Screen</dt><dd>12′7″ × 21′</dd></div><div><dt>Pixel pitch</dt><dd>8mm</dd></div><div><dt>Brightness</dt><dd>6,500 nits</dd></div><div><dt>Viewing distance</dt><dd>On request</dd></div><div><dt>Weight</dt><dd>28,000 lb</dd></div><div><dt>Setup</dt><dd>As little as 60 min</dd></div></dl>
+      </a>
+      <a class="card rig" href="mailto:hello@controlvideo.com?subject=Venus%20booking" data-cat="trailer">
+        <div class="media"><img src="assets/rig_venus.jpg" alt="Venus screen above the trees showing a live concert close-up" loading="lazy"><span class="tag">Trailer</span></div>
+        <div class="rig-head"><h3 class="h3">Venus</h3><span class="link-arrow">Book Venus →</span></div>
+        <p class="desc">Trailer screen with an onboard generator and control room.</p>
+        <dl class="rig-specs"><div><dt>Screen</dt><dd>9′5″ × 16′9″</dd></div><div><dt>Pixel pitch</dt><dd>8mm</dd></div><div><dt>Brightness</dt><dd>6,500 nits</dd></div><div><dt>Viewing distance</dt><dd>20′</dd></div><div><dt>Weight</dt><dd>24,000 lb</dd></div><div><dt>Setup</dt><dd>As little as 60 min</dd></div></dl>
+      </a>
+      <a class="card rig" href="mailto:hello@controlvideo.com?subject=Mars%20booking" data-cat="trailer">
+        <div class="media"><img src="assets/rig_mars.jpg" alt="Mars trailer screen in a park showing a football broadcast" loading="lazy"><span class="tag">Trailer</span></div>
+        <div class="rig-head"><h3 class="h3">Mars</h3><span class="link-arrow">Book Mars →</span></div>
+        <p class="desc">Finer pitch, configurable up to 13′ × 23′.</p>
+        <dl class="rig-specs"><div><dt>Screen</dt><dd>12′ × 20′</dd></div><div><dt>Pixel pitch</dt><dd>5.9mm</dd></div><div><dt>Brightness</dt><dd>6,000 nits</dd></div><div><dt>Viewing distance</dt><dd>20′</dd></div><div><dt>Weight</dt><dd>11,400 lb</dd></div><div><dt>Setup</dt><dd>As little as 60 min</dd></div></dl>
+      </a>
+      <a class="card rig" href="mailto:hello@controlvideo.com?subject=Pluto%20booking" data-cat="compact trailer">
+        <div class="media"><img src="assets/rig_pluto.jpg" alt="Pluto compact screen on a city street beside an event tent" loading="lazy"><span class="tag">Compact trailer</span></div>
+        <div class="rig-head"><h3 class="h3">Pluto</h3><span class="link-arrow">Book Pluto →</span></div>
+        <p class="desc">The smallest footprint in the fleet, for tight sites.</p>
+        <dl class="rig-specs"><div><dt>Screen</dt><dd>8′2″ × 14′9″</dd></div><div><dt>Pixel pitch</dt><dd>5.9mm</dd></div><div><dt>Brightness</dt><dd>On request</dd></div><div><dt>Viewing distance</dt><dd>12′</dd></div><div><dt>Weight</dt><dd>5,380 lb</dd></div><div><dt>Setup</dt><dd>As little as 60 min</dd></div></dl>
+      </a>
+    </div>
+  </div>
 </section>
-<section style="padding: 0 64px 120px; display: flex; flex-direction: column; gap: 40px">
-<div role="group" aria-label="Filter by format" style="display: flex; gap: 10px">
-<button type="button" aria-pressed="true" style="height: 44px; padding: 0 20px; border-radius: 999px; border: 1px solid #08080C; background: #08080C; color: #FFFFFF; font: 600 13px Sora, sans-serif; letter-spacing: 0.04em; text-transform: uppercase; cursor: pointer">All</button>
-<button type="button" aria-pressed="false" style="height: 44px; padding: 0 20px; border-radius: 999px; border: 1px solid rgba(8,8,12,0.25); background: transparent; color: #08080C; font: 600 13px Sora, sans-serif; letter-spacing: 0.04em; text-transform: uppercase; cursor: pointer">Tractor-trailer</button>
-<button type="button" aria-pressed="false" style="height: 44px; padding: 0 20px; border-radius: 999px; border: 1px solid rgba(8,8,12,0.25); background: transparent; color: #08080C; font: 600 13px Sora, sans-serif; letter-spacing: 0.04em; text-transform: uppercase; cursor: pointer">Truck-mounted</button>
-<button type="button" aria-pressed="false" style="height: 44px; padding: 0 20px; border-radius: 999px; border: 1px solid rgba(8,8,12,0.25); background: transparent; color: #08080C; font: 600 13px Sora, sans-serif; letter-spacing: 0.04em; text-transform: uppercase; cursor: pointer">Trailer</button>
-<button type="button" aria-pressed="false" style="height: 44px; padding: 0 20px; border-radius: 999px; border: 1px solid rgba(8,8,12,0.25); background: transparent; color: #08080C; font: 600 13px Sora, sans-serif; letter-spacing: 0.04em; text-transform: uppercase; cursor: pointer">Compact</button>
-</div>
-<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 24px; row-gap: 56px">
-<a href="mailto:hello@controlvideo.com?subject=Jupiter%20booking" style="display: flex; flex-direction: column; gap: 14px; text-decoration: none">
-<div style="position: relative; height: 420px; border-radius: 16px; overflow: hidden"><img src="assets/rig_jupiter.jpg" alt="Rear of the Jupiter screen towering over a festival crowd" style="width: 100%; height: 100%; object-fit: cover; display: block"><span style="position: absolute; top: 16px; left: 16px; padding: 6px 12px; border-radius: 999px; background: rgba(8,8,12,0.72); border: 1px solid rgba(255,255,255,0.18); color: #FFFFFF; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase">Tractor-trailer</span></div>
-<div style="display: flex; justify-content: space-between; align-items: baseline"><span style="font-size: 26px; line-height: 1.2; font-weight: 600">Jupiter</span><span style="font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #E3262B">Book Jupiter →</span></div>
-<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #55555F">The largest tractor-trailer mounted screen in North America.</p>
-<div style="display: flex; flex-direction: column; border-top: 1px solid rgba(8,8,12,0.1); font-size: 15px"><div style="padding: 11px 0; border-bottom: 1px solid rgba(8,8,12,0.1); display: flex; justify-content: space-between"><span style="color: #55555F">Screen</span><span style="font-weight: 600">22′ × 42′</span></div><div style="padding: 11px 0; border-bottom: 1px solid rgba(8,8,12,0.1); display: flex; justify-content: space-between"><span style="color: #55555F">Pixel pitch</span><span style="font-weight: 600">8mm</span></div><div style="padding: 11px 0; border-bottom: 1px solid rgba(8,8,12,0.1); display: flex; justify-content: space-between"><span style="color: #55555F">Brightness</span><span style="font-weight: 600">7,000 nits</span></div><div style="padding: 11px 0; border-bottom: 1px solid rgba(8,8,12,0.1); display: flex; justify-content: space-between"><span style="color: #55555F">Viewing distance</span><span style="font-weight: 600">35′</span></div><div style="padding: 11px 0; border-bottom: 1px solid rgba(8,8,12,0.1); display: flex; justify-content: space-between"><span style="color: #55555F">Weight</span><span style="font-weight: 600">70,000 lb</span></div><div style="padding: 11px 0; border-bottom: 1px solid rgba(8,8,12,0.1); display: flex; justify-content: space-between"><span style="color: #55555F">Setup</span><span style="font-weight: 600">As little as 60 min</span></div></div>
-</a>
-<a href="mailto:hello@controlvideo.com?subject=Saturn%20booking" style="display: flex; flex-direction: column; gap: 14px; text-decoration: none">
-<div style="position: relative; height: 420px; border-radius: 16px; overflow: hidden"><img src="assets/rig_saturn.jpg" alt="Saturn screen over a parade route showing a championship graphic" style="width: 100%; height: 100%; object-fit: cover; display: block"><span style="position: absolute; top: 16px; left: 16px; padding: 6px 12px; border-radius: 999px; background: rgba(8,8,12,0.72); border: 1px solid rgba(255,255,255,0.18); color: #FFFFFF; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase">Tractor-trailer</span></div>
-<div style="display: flex; justify-content: space-between; align-items: baseline"><span style="font-size: 26px; line-height: 1.2; font-weight: 600">Saturn</span><span style="font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #E3262B">Book Saturn →</span></div>
-<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #55555F">Big-crowd screen with an onboard generator and control room.</p>
-<div style="display: flex; flex-direction: column; border-top: 1px solid rgba(8,8,12,0.1); font-size: 15px"><div style="padding: 11px 0; border-bottom: 1px solid rgba(8,8,12,0.1); display: flex; justify-content: space-between"><span style="color: #55555F">Screen</span><span style="font-weight: 600">17′ × 32′</span></div><div style="padding: 11px 0; border-bottom: 1px solid rgba(8,8,12,0.1); display: flex; justify-content: space-between"><span style="color: #55555F">Pixel pitch</span><span style="font-weight: 600">8mm</span></div><div style="padding: 11px 0; border-bottom: 1px solid rgba(8,8,12,0.1); display: flex; justify-content: space-between"><span style="color: #55555F">Brightness</span><span style="font-weight: 600">7,000 nits</span></div><div style="padding: 11px 0; border-bottom: 1px solid rgba(8,8,12,0.1); display: flex; justify-content: space-between"><span style="color: #55555F">Viewing distance</span><span style="font-weight: 600">35′</span></div><div style="padding: 11px 0; border-bottom: 1px solid rgba(8,8,12,0.1); display: flex; justify-content: space-between"><span style="color: #55555F">Weight</span><span style="font-weight: 600">63,000 lb</span></div><div style="padding: 11px 0; border-bottom: 1px solid rgba(8,8,12,0.1); display: flex; justify-content: space-between"><span style="color: #55555F">Setup</span><span style="font-weight: 600">As little as 60 min</span></div></div>
-</a>
-<a href="mailto:hello@controlvideo.com?subject=Neptune%20booking" style="display: flex; flex-direction: column; gap: 14px; text-decoration: none">
-<div style="position: relative; height: 420px; border-radius: 16px; overflow: hidden"><img src="assets/rig_neptune.jpg" alt="Neptune screens flanking a festival main stage at dusk" style="width: 100%; height: 100%; object-fit: cover; display: block"><span style="position: absolute; top: 16px; left: 16px; padding: 6px 12px; border-radius: 999px; background: rgba(8,8,12,0.72); border: 1px solid rgba(255,255,255,0.18); color: #FFFFFF; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase">Tractor-trailer</span></div>
-<div style="display: flex; justify-content: space-between; align-items: baseline"><span style="font-size: 26px; line-height: 1.2; font-weight: 600">Neptune</span><span style="font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #E3262B">Book Neptune →</span></div>
-<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #55555F">Full-size screen with an onboard generator and control room.</p>
-<div style="display: flex; flex-direction: column; border-top: 1px solid rgba(8,8,12,0.1); font-size: 15px"><div style="padding: 11px 0; border-bottom: 1px solid rgba(8,8,12,0.1); display: flex; justify-content: space-between"><span style="color: #55555F">Screen</span><span style="font-weight: 600">14′ × 24′</span></div><div style="padding: 11px 0; border-bottom: 1px solid rgba(8,8,12,0.1); display: flex; justify-content: space-between"><span style="color: #55555F">Pixel pitch</span><span style="font-weight: 600">8mm</span></div><div style="padding: 11px 0; border-bottom: 1px solid rgba(8,8,12,0.1); display: flex; justify-content: space-between"><span style="color: #55555F">Brightness</span><span style="font-weight: 600">7,000 nits</span></div><div style="padding: 11px 0; border-bottom: 1px solid rgba(8,8,12,0.1); display: flex; justify-content: space-between"><span style="color: #55555F">Viewing distance</span><span style="font-weight: 600">50′</span></div><div style="padding: 11px 0; border-bottom: 1px solid rgba(8,8,12,0.1); display: flex; justify-content: space-between"><span style="color: #55555F">Weight</span><span style="font-weight: 600">51,000 lb</span></div><div style="padding: 11px 0; border-bottom: 1px solid rgba(8,8,12,0.1); display: flex; justify-content: space-between"><span style="color: #55555F">Setup</span><span style="font-weight: 600">As little as 60 min</span></div></div>
-</a>
-<a href="mailto:hello@controlvideo.com?subject=Ceres%20booking" style="display: flex; flex-direction: column; gap: 14px; text-decoration: none">
-<div style="position: relative; height: 420px; border-radius: 16px; overflow: hidden"><img src="assets/rig_ceres.jpg" alt="Ceres screen at sunrise on a lawn showing a thank-you message" style="width: 100%; height: 100%; object-fit: cover; display: block"><span style="position: absolute; top: 16px; left: 16px; padding: 6px 12px; border-radius: 999px; background: rgba(8,8,12,0.72); border: 1px solid rgba(255,255,255,0.18); color: #FFFFFF; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase">Truck-mounted</span></div>
-<div style="display: flex; justify-content: space-between; align-items: baseline"><span style="font-size: 26px; line-height: 1.2; font-weight: 600">Ceres</span><span style="font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #E3262B">Book Ceres →</span></div>
-<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #55555F">Mounted on a truck chassis for drive-in, drive-out setups.</p>
-<div style="display: flex; flex-direction: column; border-top: 1px solid rgba(8,8,12,0.1); font-size: 15px"><div style="padding: 11px 0; border-bottom: 1px solid rgba(8,8,12,0.1); display: flex; justify-content: space-between"><span style="color: #55555F">Screen</span><span style="font-weight: 600">11′ × 19′</span></div><div style="padding: 11px 0; border-bottom: 1px solid rgba(8,8,12,0.1); display: flex; justify-content: space-between"><span style="color: #55555F">Pixel pitch</span><span style="font-weight: 600">8mm</span></div><div style="padding: 11px 0; border-bottom: 1px solid rgba(8,8,12,0.1); display: flex; justify-content: space-between"><span style="color: #55555F">Brightness</span><span style="font-weight: 600">7,000 nits</span></div><div style="padding: 11px 0; border-bottom: 1px solid rgba(8,8,12,0.1); display: flex; justify-content: space-between"><span style="color: #55555F">Viewing distance</span><span style="font-weight: 600">50′</span></div><div style="padding: 11px 0; border-bottom: 1px solid rgba(8,8,12,0.1); display: flex; justify-content: space-between"><span style="color: #55555F">Weight</span><span style="font-weight: 600">24,000 lb</span></div><div style="padding: 11px 0; border-bottom: 1px solid rgba(8,8,12,0.1); display: flex; justify-content: space-between"><span style="color: #55555F">Setup</span><span style="font-weight: 600">As little as 60 min</span></div></div>
-</a>
-<a href="mailto:hello@controlvideo.com?subject=Russell%20HD%20booking" style="display: flex; flex-direction: column; gap: 14px; text-decoration: none">
-<div style="position: relative; height: 420px; border-radius: 16px; overflow: hidden"><img src="assets/rig_russell.jpg" alt="Russell HD truck screen on a main street showing a group photo" style="width: 100%; height: 100%; object-fit: cover; display: block"><span style="position: absolute; top: 16px; left: 16px; padding: 6px 12px; border-radius: 999px; background: rgba(8,8,12,0.72); border: 1px solid rgba(255,255,255,0.18); color: #FFFFFF; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase">Truck-mounted</span></div>
-<div style="display: flex; justify-content: space-between; align-items: baseline"><span style="font-size: 26px; line-height: 1.2; font-weight: 600">Russell HD</span><span style="font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #E3262B">Book Russell HD →</span></div>
-<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #55555F">Drive-in, drive-out screen on a truck chassis.</p>
-<div style="display: flex; flex-direction: column; border-top: 1px solid rgba(8,8,12,0.1); font-size: 15px"><div style="padding: 11px 0; border-bottom: 1px solid rgba(8,8,12,0.1); display: flex; justify-content: space-between"><span style="color: #55555F">Screen</span><span style="font-weight: 600">12′7″ × 21′</span></div><div style="padding: 11px 0; border-bottom: 1px solid rgba(8,8,12,0.1); display: flex; justify-content: space-between"><span style="color: #55555F">Pixel pitch</span><span style="font-weight: 600">8mm</span></div><div style="padding: 11px 0; border-bottom: 1px solid rgba(8,8,12,0.1); display: flex; justify-content: space-between"><span style="color: #55555F">Brightness</span><span style="font-weight: 600">6,500 nits</span></div><div style="padding: 11px 0; border-bottom: 1px solid rgba(8,8,12,0.1); display: flex; justify-content: space-between"><span style="color: #55555F">Viewing distance</span><span style="font-weight: 600">On request</span></div><div style="padding: 11px 0; border-bottom: 1px solid rgba(8,8,12,0.1); display: flex; justify-content: space-between"><span style="color: #55555F">Weight</span><span style="font-weight: 600">28,000 lb</span></div><div style="padding: 11px 0; border-bottom: 1px solid rgba(8,8,12,0.1); display: flex; justify-content: space-between"><span style="color: #55555F">Setup</span><span style="font-weight: 600">As little as 60 min</span></div></div>
-</a>
-<a href="mailto:hello@controlvideo.com?subject=Venus%20booking" style="display: flex; flex-direction: column; gap: 14px; text-decoration: none">
-<div style="position: relative; height: 420px; border-radius: 16px; overflow: hidden"><img src="assets/rig_venus.jpg" alt="Venus screen above the trees showing a live concert close-up" style="width: 100%; height: 100%; object-fit: cover; display: block"><span style="position: absolute; top: 16px; left: 16px; padding: 6px 12px; border-radius: 999px; background: rgba(8,8,12,0.72); border: 1px solid rgba(255,255,255,0.18); color: #FFFFFF; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase">Trailer</span></div>
-<div style="display: flex; justify-content: space-between; align-items: baseline"><span style="font-size: 26px; line-height: 1.2; font-weight: 600">Venus</span><span style="font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #E3262B">Book Venus →</span></div>
-<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #55555F">Trailer screen with an onboard generator and control room.</p>
-<div style="display: flex; flex-direction: column; border-top: 1px solid rgba(8,8,12,0.1); font-size: 15px"><div style="padding: 11px 0; border-bottom: 1px solid rgba(8,8,12,0.1); display: flex; justify-content: space-between"><span style="color: #55555F">Screen</span><span style="font-weight: 600">9′5″ × 16′9″</span></div><div style="padding: 11px 0; border-bottom: 1px solid rgba(8,8,12,0.1); display: flex; justify-content: space-between"><span style="color: #55555F">Pixel pitch</span><span style="font-weight: 600">8mm</span></div><div style="padding: 11px 0; border-bottom: 1px solid rgba(8,8,12,0.1); display: flex; justify-content: space-between"><span style="color: #55555F">Brightness</span><span style="font-weight: 600">6,500 nits</span></div><div style="padding: 11px 0; border-bottom: 1px solid rgba(8,8,12,0.1); display: flex; justify-content: space-between"><span style="color: #55555F">Viewing distance</span><span style="font-weight: 600">20′</span></div><div style="padding: 11px 0; border-bottom: 1px solid rgba(8,8,12,0.1); display: flex; justify-content: space-between"><span style="color: #55555F">Weight</span><span style="font-weight: 600">24,000 lb</span></div><div style="padding: 11px 0; border-bottom: 1px solid rgba(8,8,12,0.1); display: flex; justify-content: space-between"><span style="color: #55555F">Setup</span><span style="font-weight: 600">As little as 60 min</span></div></div>
-</a>
-<a href="mailto:hello@controlvideo.com?subject=Mars%20booking" style="display: flex; flex-direction: column; gap: 14px; text-decoration: none">
-<div style="position: relative; height: 420px; border-radius: 16px; overflow: hidden"><img src="assets/rig_mars.jpg" alt="Mars trailer screen in a park showing a football broadcast" style="width: 100%; height: 100%; object-fit: cover; display: block"><span style="position: absolute; top: 16px; left: 16px; padding: 6px 12px; border-radius: 999px; background: rgba(8,8,12,0.72); border: 1px solid rgba(255,255,255,0.18); color: #FFFFFF; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase">Trailer</span></div>
-<div style="display: flex; justify-content: space-between; align-items: baseline"><span style="font-size: 26px; line-height: 1.2; font-weight: 600">Mars</span><span style="font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #E3262B">Book Mars →</span></div>
-<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #55555F">Finer pitch, configurable up to 13′ × 23′.</p>
-<div style="display: flex; flex-direction: column; border-top: 1px solid rgba(8,8,12,0.1); font-size: 15px"><div style="padding: 11px 0; border-bottom: 1px solid rgba(8,8,12,0.1); display: flex; justify-content: space-between"><span style="color: #55555F">Screen</span><span style="font-weight: 600">12′ × 20′</span></div><div style="padding: 11px 0; border-bottom: 1px solid rgba(8,8,12,0.1); display: flex; justify-content: space-between"><span style="color: #55555F">Pixel pitch</span><span style="font-weight: 600">5.9mm</span></div><div style="padding: 11px 0; border-bottom: 1px solid rgba(8,8,12,0.1); display: flex; justify-content: space-between"><span style="color: #55555F">Brightness</span><span style="font-weight: 600">6,000 nits</span></div><div style="padding: 11px 0; border-bottom: 1px solid rgba(8,8,12,0.1); display: flex; justify-content: space-between"><span style="color: #55555F">Viewing distance</span><span style="font-weight: 600">20′</span></div><div style="padding: 11px 0; border-bottom: 1px solid rgba(8,8,12,0.1); display: flex; justify-content: space-between"><span style="color: #55555F">Weight</span><span style="font-weight: 600">11,400 lb</span></div><div style="padding: 11px 0; border-bottom: 1px solid rgba(8,8,12,0.1); display: flex; justify-content: space-between"><span style="color: #55555F">Setup</span><span style="font-weight: 600">As little as 60 min</span></div></div>
-</a>
-<a href="mailto:hello@controlvideo.com?subject=Pluto%20booking" style="display: flex; flex-direction: column; gap: 14px; text-decoration: none">
-<div style="position: relative; height: 420px; border-radius: 16px; overflow: hidden"><img src="assets/rig_pluto.jpg" alt="Pluto compact screen on a city street beside an event tent" style="width: 100%; height: 100%; object-fit: cover; display: block"><span style="position: absolute; top: 16px; left: 16px; padding: 6px 12px; border-radius: 999px; background: rgba(8,8,12,0.72); border: 1px solid rgba(255,255,255,0.18); color: #FFFFFF; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase">Compact trailer</span></div>
-<div style="display: flex; justify-content: space-between; align-items: baseline"><span style="font-size: 26px; line-height: 1.2; font-weight: 600">Pluto</span><span style="font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #E3262B">Book Pluto →</span></div>
-<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #55555F">The smallest footprint in the fleet, for tight sites.</p>
-<div style="display: flex; flex-direction: column; border-top: 1px solid rgba(8,8,12,0.1); font-size: 15px"><div style="padding: 11px 0; border-bottom: 1px solid rgba(8,8,12,0.1); display: flex; justify-content: space-between"><span style="color: #55555F">Screen</span><span style="font-weight: 600">8′2″ × 14′9″</span></div><div style="padding: 11px 0; border-bottom: 1px solid rgba(8,8,12,0.1); display: flex; justify-content: space-between"><span style="color: #55555F">Pixel pitch</span><span style="font-weight: 600">5.9mm</span></div><div style="padding: 11px 0; border-bottom: 1px solid rgba(8,8,12,0.1); display: flex; justify-content: space-between"><span style="color: #55555F">Brightness</span><span style="font-weight: 600">On request</span></div><div style="padding: 11px 0; border-bottom: 1px solid rgba(8,8,12,0.1); display: flex; justify-content: space-between"><span style="color: #55555F">Viewing distance</span><span style="font-weight: 600">12′</span></div><div style="padding: 11px 0; border-bottom: 1px solid rgba(8,8,12,0.1); display: flex; justify-content: space-between"><span style="color: #55555F">Weight</span><span style="font-weight: 600">5,380 lb</span></div><div style="padding: 11px 0; border-bottom: 1px solid rgba(8,8,12,0.1); display: flex; justify-content: space-between"><span style="color: #55555F">Setup</span><span style="font-weight: 600">As little as 60 min</span></div></div>
-</a>
-</div>
+
+<section class="cta">
+  <div class="wrap">
+    <h2>Roll it into yours.</h2>
+    <p class="lede muted">Tell us the date, the site and the crowd. We’ll call you back with the right rig.</p>
+    <div class="btn-row">
+      <a class="btn btn-primary" href="mailto:hello@controlvideo.com?subject=LED%20truck%20booking">Email us</a>
+      <a class="btn btn-ghost" href="tel:+13012773429">Call (301) 277-3429</a>
+    </div>
+  </div>
 </section>
-<section style="flex-grow: 1; padding: 120px 64px; background: radial-gradient(ellipse 60% 70% at 50% 100%, rgba(227,38,43,0.12) 0%, rgba(255,255,255,0) 70%); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 28px; text-align: center">
-<h2 style="margin: 0; font-size: 96px; line-height: 0.98; letter-spacing: -0.02em; font-weight: 700; text-transform: uppercase">Roll it into yours.</h2>
-<p style="margin: 0; font-size: 18px; line-height: 1.6; color: #55555F">Tell us the date, the site and the crowd. We’ll call you back with the right rig.</p>
-<div style="display: flex; gap: 12px; margin-top: 8px">
-<a href="mailto:hello@controlvideo.com?subject=LED%20truck%20booking" style="height: 52px; padding: 0 26px; display: flex; align-items: center; background: #E3262B; color: #FFFFFF; text-decoration: none; border-radius: 999px; font-size: 14px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase">Email us</a>
-<a href="tel:+13012773429" style="height: 52px; padding: 0 26px; display: flex; align-items: center; border: 1px solid rgba(8,8,12,0.4); color: #08080C; text-decoration: none; border-radius: 999px; font-size: 14px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase">Call (301) 277-3429</a>
-</div>
-</section>
-<footer style="flex-shrink: 0; padding: 56px 64px 40px; border-top: 1px solid rgba(8,8,12,0.1); display: flex; flex-direction: column; gap: 48px">
-<div style="display: flex; justify-content: space-between; align-items: flex-start">
-<div style="display: flex; flex-direction: column; gap: 14px">
-<div style="display: flex; align-items: center; gap: 14px"><svg width="40" height="40" viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="5" width="26" height="17" rx="2.5" fill="none" stroke="currentColor" stroke-width="3.2"></rect><path d="M13.2 9.4 L20.4 13.5 L13.2 17.6 Z" fill="#E3262B"></path><circle cx="9" cy="27" r="2.4" fill="currentColor"></circle><circle cx="23" cy="27" r="2.4" fill="currentColor"></circle></svg><span style="font-size: 26px; font-weight: 600; letter-spacing: -0.02em">LED Truck Co.</span></div>
-<div style="font-size: 14px; line-height: 1.6; color: #55555F">Mobile LED screens · A Control Video company · Brentwood, MD</div>
-</div>
-<div style="display: flex; gap: 80px; font-size: 15px">
-<div style="display: flex; flex-direction: column; gap: 12px"><a href="led-fleet.html" style="text-decoration: none">Fleet</a><a href="led.html#events" style="text-decoration: none">Events</a></div>
-<div style="display: flex; flex-direction: column; gap: 12px"><a href="tel:+13012773429" style="text-decoration: none">(301) 277-3429</a><a href="mailto:hello@controlvideo.com" style="text-decoration: none">hello@controlvideo.com</a></div>
-<div style="display: flex; flex-direction: column; gap: 12px"><a href="home.html" style="text-decoration: none">Control Video ↗</a></div>
-</div>
-</div>
-<div style="font-size: 13px; color: #55555F">© 2026 Control Video, LLC</div>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="brand"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="5" width="26" height="17" rx="2.5" fill="none" stroke="currentColor" stroke-width="3.2"/><path d="M13.2 9.4 L20.4 13.5 L13.2 17.6 Z" fill="#E3262B"/><circle cx="9" cy="27" r="2.4" fill="currentColor"/><circle cx="23" cy="27" r="2.4" fill="currentColor"/></svg><span>LED Truck Co.</span></div>
+        <p class="muted">Mobile LED screens · A Control Video company · Brentwood, MD</p>
+      </div>
+      <nav class="footer-links" aria-label="Footer">
+        <div><a href="led-fleet.html">Fleet</a><a href="led.html#events">Events</a></div>
+        <div><a href="tel:+13012773429">(301) 277-3429</a><a href="mailto:hello@controlvideo.com">hello@controlvideo.com</a></div>
+        <div><a href="home.html">Control Video ↗</a></div>
+      </nav>
+    </div>
+    <p class="fine">© 2026 Control Video, LLC</p>
+  </div>
 </footer>
-</div>
-</x-dc>
-<script>
-(function(){function fit(){var r=document.querySelector('x-dc>div');if(!r)return;r.style.zoom=Math.min(1.25,document.documentElement.clientWidth/1440);}fit();window.addEventListener('resize',fit);})();
-</script>
+
+<script src="assets/site.js" defer></script>
 </body>
 </html>

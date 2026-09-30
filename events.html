@@ -2,201 +2,205 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Control Video — Events</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
+<title>Control Video — Events</title>
+<meta name="description" content="Galas, corporate forums, festivals, sporting activations and civic events. Five kinds of events make up most of our year, and we plan for each from the first call.">
+<link rel="preload" href="assets/sora-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/site.css">
+<style>
+.events{padding-top:clamp(40px, 4.45vw, 64px)}
+.events>.wrap{gap:32px}
+.ev{padding:clamp(24px, 3.33vw, 48px);gap:clamp(28px, 2.8vw, 40px);scroll-margin-top:24px}
+.ev-head{display:grid;grid-template-columns:repeat(12, minmax(0, 1fr));gap:var(--gap);align-items:start}
+.ev-text{grid-column:span 6;display:flex;flex-direction:column;gap:18px}
+.ev .chips{list-style:none;margin:0;padding-left:0;grid-column:9 / span 4;flex-direction:column;align-items:flex-end;padding-top:28px}
+.ev .chip{background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.14);white-space:nowrap}
+.ev .card{gap:10px}
+.ev .media{aspect-ratio:596/380}
+.ev .card .h3{font-size:22px;line-height:1.25}
+.ev .link-arrow{align-self:flex-start;min-height:44px;display:inline-flex;align-items:center;margin-block:-12px}
+@media (max-width:900px){
+  .ev-head{grid-template-columns:1fr;gap:20px}
+  .ev-text,.ev .chips{grid-column:auto}
+  .ev .chips{flex-direction:row;align-items:flex-start;padding-top:0}
+}
+@media (max-width:600px){
+  .ev .media{aspect-ratio:4/3}
+  .ev .card .h3{font-size:20px}
+}
+</style>
 </head>
 <body>
-<x-dc>
+<a class="skip" href="#main">Skip to content</a>
 
-<style>
-@font-face{font-family:'Sora';src:url('assets/sora-latin-wght-normal.woff2') format('woff2');font-weight:100 800;font-display:swap}
-body{margin:0;background:#08080C}x-dc{display:block}x-dc>div{margin:0 auto}html,body{overflow-x:hidden}
-a{color:inherit}a:hover{color:inherit}
-</style>
-
-<div style="width: 1440px; height: 5840px; background: #08080C; color: #FFFFFF; font-family: Sora, system-ui, sans-serif; display: flex; flex-direction: column">
-
-<section style="position: relative; height: 640px; flex-shrink: 0; overflow: hidden">
-<img src="assets/festscreen.jpg" alt="Festival crowd in front of an outdoor LED screen at dusk" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover">
-<div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(180deg, rgba(8,8,12,0.7) 0%, rgba(8,8,12,0.3) 30%, rgba(8,8,12,0.4) 55%, rgba(8,8,12,1) 100%)"></div>
-<header style="position: absolute; top: 0; left: 0; right: 0; height: 96px; padding: 0 64px; display: flex; align-items: center; justify-content: space-between">
-<a href="home.html" aria-label="Control Video home" style="display: flex; align-items: center; gap: 14px; text-decoration: none"><svg width="44" height="44" viewBox="0 0 32 32" aria-hidden="true"><path d="M24.5 7.5 A12 12 0 1 0 24.5 24.5" fill="none" stroke="currentColor" stroke-width="4.6"></path><path d="M13 10.2 L23 16 L13 21.8 Z" fill="#E3262B"></path></svg><span style="font-size: 28px; font-weight: 600; letter-spacing: -0.02em">Control Video</span></a>
-<nav style="display: flex; align-items: center; gap: 36px; font-size: 15px; font-weight: 500">
-<a href="work.html" style="text-decoration: none">Work</a>
-<a href="events.html" aria-current="page" style="text-decoration: underline; text-underline-offset: 8px; text-decoration-thickness: 2px; text-decoration-color: #E3262B">Events</a>
-<a href="technology.html" style="text-decoration: none">Technology</a>
-<a href="mailto:hello@controlvideo.com" style="height: 44px; padding: 0 22px; display: flex; align-items: center; background: #E3262B; color: #FFFFFF; text-decoration: none; border-radius: 999px; font-size: 13px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase">Let’s talk</a>
-</nav>
-</header>
-<div style="position: absolute; left: 64px; right: 64px; bottom: 72px; display: flex; justify-content: space-between; align-items: flex-end; gap: 64px">
-<h1 style="margin: 0; font-size: 112px; line-height: 0.95; letter-spacing: -0.02em; font-weight: 700; text-transform: uppercase">Built for<br>the big ones.</h1>
-<p style="margin: 0 0 10px; width: 420px; font-size: 18px; line-height: 1.6; color: #D6D6DD">Five kinds of events make up most of our year. Each asks for something different, and we plan for it from the first call.</p>
-</div>
+<section class="hero short">
+  <img src="assets/festscreen.jpg" alt="Festival crowd in front of an outdoor LED screen at dusk" fetchpriority="high">
+  <div class="shade"></div>
+  <header class="site-header over">
+    <div class="wrap">
+      <a class="brand" href="home.html" aria-label="Control Video home"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M24.5 7.5 A12 12 0 1 0 24.5 24.5" fill="none" stroke="currentColor" stroke-width="4.6"/><path d="M13 10.2 L23 16 L13 21.8 Z" fill="#E3262B"/></svg><span>Control Video</span></a>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Menu"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M2 5h16M2 10h16M2 15h16" stroke="currentColor" stroke-width="2" fill="none"/></svg></button>
+      <nav class="nav" id="site-nav" aria-label="Main">
+        <a href="work.html">Work</a>
+        <a href="events.html" aria-current="page">Events</a>
+        <a href="technology.html">Technology</a>
+        <a class="btn btn-sm btn-primary" href="mailto:hello@controlvideo.com">Let’s talk</a>
+      </nav>
+    </div>
+  </header>
+  <div class="wrap hero-body">
+    <h1 class="display">Built for<br>the big ones.</h1>
+    <div class="side">
+      <p class="lede">Five kinds of events make up most of our year. Each asks for something different, and we plan for it from the first call.</p>
+    </div>
+  </div>
 </section>
 
-<section style="padding: 64px 64px 120px; display: flex; flex-direction: column; gap: 32px">
-<div style="padding: 48px; background: #121218; border: 1px solid rgba(255,255,255,0.08); border-radius: 24px; display: flex; flex-direction: column; gap: 40px">
-<div style="display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 24px; align-items: start">
-<div style="grid-column: span 6; display: flex; flex-direction: column; gap: 18px">
-<div style="font-size: 13px; font-weight: 600; letter-spacing: 0.08em; color: #E3262B">01</div>
-<h2 style="margin: 0; font-size: 48px; line-height: 1.05; letter-spacing: -0.02em; font-weight: 600">Galas &amp; conferences</h2>
-<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #A6A6B0">A cue-driven program where every transition is rehearsed, with the composure to adapt when a live evening goes off script.</p>
-</div>
-<div style="grid-column: 9 / span 4; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; padding-top: 28px">
-<span style="padding: 8px 14px; border-radius: 999px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); font-size: 12px; font-weight: 600; letter-spacing: 0.04em; white-space: nowrap">Show-calling</span>
-<span style="padding: 8px 14px; border-radius: 999px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); font-size: 12px; font-weight: 600; letter-spacing: 0.04em; white-space: nowrap">IMAG</span>
-<span style="padding: 8px 14px; border-radius: 999px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); font-size: 12px; font-weight: 600; letter-spacing: 0.04em; white-space: nowrap">Stage lighting</span>
-<span style="padding: 8px 14px; border-radius: 999px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); font-size: 12px; font-weight: 600; letter-spacing: 0.04em; white-space: nowrap">Confidence monitors</span>
-<span style="padding: 8px 14px; border-radius: 999px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); font-size: 12px; font-weight: 600; letter-spacing: 0.04em; white-space: nowrap">Rehearsed transitions</span>
-</div>
-</div>
-<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px">
-<a href="work.html" style="display: flex; flex-direction: column; gap: 16px; text-decoration: none">
-<div style="position: relative; height: 380px; border-radius: 16px; overflow: hidden"><img src="assets/ballroom.jpg" alt="Ballroom set for a conference with a camera jib over the room" style="width: 100%; height: 100%; object-fit: cover; display: block"><span style="position: absolute; top: 16px; left: 16px; padding: 6px 12px; border-radius: 999px; background: rgba(8,8,12,0.72); border: 1px solid rgba(255,255,255,0.18); font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase">Conference</span></div>
-<div style="font-size: 22px; line-height: 1.25; font-weight: 600">Every cue, rehearsed</div>
-</a>
-<a href="work.html" style="display: flex; flex-direction: column; gap: 16px; text-decoration: none">
-<div style="position: relative; height: 380px; border-radius: 16px; overflow: hidden"><img src="assets/hero_hall.jpg" alt="Orchestra concert in a grand hall framed by an LED backdrop" style="width: 100%; height: 100%; object-fit: cover; display: block"><span style="position: absolute; top: 16px; left: 16px; padding: 6px 12px; border-radius: 999px; background: rgba(8,8,12,0.72); border: 1px solid rgba(255,255,255,0.18); font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase">Gala</span></div>
-<div style="font-size: 22px; line-height: 1.25; font-weight: 600">A holiday concert in a grand hall</div>
-</a>
-</div>
-<a href="work.html" style="align-self: flex-start; font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; text-decoration: none">All gala work →</a>
-</div>
-<div style="padding: 48px; background: #121218; border: 1px solid rgba(255,255,255,0.08); border-radius: 24px; display: flex; flex-direction: column; gap: 40px">
-<div style="display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 24px; align-items: start">
-<div style="grid-column: span 6; display: flex; flex-direction: column; gap: 18px">
-<div style="font-size: 13px; font-weight: 600; letter-spacing: 0.08em; color: #E3262B">02</div>
-<h2 style="margin: 0; font-size: 48px; line-height: 1.05; letter-spacing: -0.02em; font-weight: 600">Corporate &amp; forums</h2>
-<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #A6A6B0">Launches, openings and policy forums in front of press. The message lands the same in the room and on the webcast.</p>
-</div>
-<div style="grid-column: 9 / span 4; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; padding-top: 28px">
-<span style="padding: 8px 14px; border-radius: 999px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); font-size: 12px; font-weight: 600; letter-spacing: 0.04em; white-space: nowrap">4K broadcast chains</span>
-<span style="padding: 8px 14px; border-radius: 999px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); font-size: 12px; font-weight: 600; letter-spacing: 0.04em; white-space: nowrap">Clean press feed</span>
-<span style="padding: 8px 14px; border-radius: 999px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); font-size: 12px; font-weight: 600; letter-spacing: 0.04em; white-space: nowrap">Dual-mix audio</span>
-<span style="padding: 8px 14px; border-radius: 999px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); font-size: 12px; font-weight: 600; letter-spacing: 0.04em; white-space: nowrap">Webcast</span>
-</div>
-</div>
-<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px">
-<a href="work.html" style="display: flex; flex-direction: column; gap: 16px; text-decoration: none">
-<div style="position: relative; height: 380px; border-radius: 16px; overflow: hidden"><img src="assets/forum.jpg" alt="Forum stage with a curved LED wall" style="width: 100%; height: 100%; object-fit: cover; display: block"><span style="position: absolute; top: 16px; left: 16px; padding: 6px 12px; border-radius: 999px; background: rgba(8,8,12,0.72); border: 1px solid rgba(255,255,255,0.18); font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase">Corporate</span></div>
-<div style="font-size: 22px; line-height: 1.25; font-weight: 600">Built for the record</div>
-</a>
-<a href="work.html" style="display: flex; flex-direction: column; gap: 16px; text-decoration: none">
-<div style="position: relative; height: 380px; border-radius: 16px; overflow: hidden"><img src="assets/ledwall.jpg" alt="Curved LED wall with presentation content" style="width: 100%; height: 100%; object-fit: cover; display: block"><span style="position: absolute; top: 16px; left: 16px; padding: 6px 12px; border-radius: 999px; background: rgba(8,8,12,0.72); border: 1px solid rgba(255,255,255,0.18); font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase">Corporate</span></div>
-<div style="font-size: 22px; line-height: 1.25; font-weight: 600">A curved wall for a policy launch</div>
-</a>
-</div>
-<a href="work.html" style="align-self: flex-start; font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; text-decoration: none">All corporate work →</a>
-</div>
-<div style="padding: 48px; background: #121218; border: 1px solid rgba(255,255,255,0.08); border-radius: 24px; display: flex; flex-direction: column; gap: 40px">
-<div style="display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 24px; align-items: start">
-<div style="grid-column: span 6; display: flex; flex-direction: column; gap: 18px">
-<div style="font-size: 13px; font-weight: 600; letter-spacing: 0.08em; color: #E3262B">03</div>
-<h2 style="margin: 0; font-size: 48px; line-height: 1.05; letter-spacing: -0.02em; font-weight: 600">Festivals &amp; concerts</h2>
-<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #A6A6B0">Multi-stage, outdoor and multi-day. Display and audio that reach the whole crowd and hold up to weather and power.</p>
-</div>
-<div style="grid-column: 9 / span 4; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; padding-top: 28px">
-<span style="padding: 8px 14px; border-radius: 999px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); font-size: 12px; font-weight: 600; letter-spacing: 0.04em; white-space: nowrap">Large-format LED</span>
-<span style="padding: 8px 14px; border-radius: 999px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); font-size: 12px; font-weight: 600; letter-spacing: 0.04em; white-space: nowrap">Distributed video</span>
-<span style="padding: 8px 14px; border-radius: 999px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); font-size: 12px; font-weight: 600; letter-spacing: 0.04em; white-space: nowrap">Fiber backbones</span>
-<span style="padding: 8px 14px; border-radius: 999px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); font-size: 12px; font-weight: 600; letter-spacing: 0.04em; white-space: nowrap">Endurance crews</span>
-</div>
-</div>
-<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px">
-<a href="work.html" style="display: flex; flex-direction: column; gap: 16px; text-decoration: none">
-<div style="position: relative; height: 380px; border-radius: 16px; overflow: hidden"><img src="assets/festcrowd.jpg" alt="Festival crowd facing a main stage flanked by two LED screens" style="width: 100%; height: 100%; object-fit: cover; display: block"><span style="position: absolute; top: 16px; left: 16px; padding: 6px 12px; border-radius: 999px; background: rgba(8,8,12,0.72); border: 1px solid rgba(255,255,255,0.18); font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase">Festival</span></div>
-<div style="font-size: 22px; line-height: 1.25; font-weight: 600">One image, a mile wide</div>
-</a>
-<a href="work.html" style="display: flex; flex-direction: column; gap: 16px; text-decoration: none">
-<div style="position: relative; height: 380px; border-radius: 16px; overflow: hidden"><img src="assets/festscreen.jpg" alt="Festival crowd in front of an outdoor LED screen at dusk" style="width: 100%; height: 100%; object-fit: cover; display: block"><span style="position: absolute; top: 16px; left: 16px; padding: 6px 12px; border-radius: 999px; background: rgba(8,8,12,0.72); border: 1px solid rgba(255,255,255,0.18); font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase">Festival</span></div>
-<div style="font-size: 22px; line-height: 1.25; font-weight: 600">Sunset on the second stage</div>
-</a>
-</div>
-<a href="work.html" style="align-self: flex-start; font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; text-decoration: none">All festival work →</a>
-</div>
-<div style="padding: 48px; background: #121218; border: 1px solid rgba(255,255,255,0.08); border-radius: 24px; display: flex; flex-direction: column; gap: 40px">
-<div style="display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 24px; align-items: start">
-<div style="grid-column: span 6; display: flex; flex-direction: column; gap: 18px">
-<div style="font-size: 13px; font-weight: 600; letter-spacing: 0.08em; color: #E3262B">04</div>
-<h2 style="margin: 0; font-size: 48px; line-height: 1.05; letter-spacing: -0.02em; font-weight: 600">Sporting &amp; activations</h2>
-<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #A6A6B0">Fan zones and sponsor spaces, including sites with no screens until ours roll in. Bright, fast to deploy and mobile.</p>
-</div>
-<div style="grid-column: 9 / span 4; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; padding-top: 28px">
-<span style="padding: 8px 14px; border-radius: 999px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); font-size: 12px; font-weight: 600; letter-spacing: 0.04em; white-space: nowrap">Daylight-readable</span>
-<span style="padding: 8px 14px; border-radius: 999px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); font-size: 12px; font-weight: 600; letter-spacing: 0.04em; white-space: nowrap">Fast deploy</span>
-<span style="padding: 8px 14px; border-radius: 999px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); font-size: 12px; font-weight: 600; letter-spacing: 0.04em; white-space: nowrap">Instant replay</span>
-<span style="padding: 8px 14px; border-radius: 999px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); font-size: 12px; font-weight: 600; letter-spacing: 0.04em; white-space: nowrap">LED trucks</span>
-</div>
-</div>
-<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px">
-<a href="work.html" style="display: flex; flex-direction: column; gap: 16px; text-decoration: none">
-<div style="position: relative; height: 380px; border-radius: 16px; overflow: hidden"><img src="assets/ballpark.jpg" alt="Fans watching a ballgame on an outdoor LED screen" style="width: 100%; height: 100%; object-fit: cover; display: block"><span style="position: absolute; top: 16px; left: 16px; padding: 6px 12px; border-radius: 999px; background: rgba(8,8,12,0.72); border: 1px solid rgba(255,255,255,0.18); font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase">Sporting</span></div>
-<div style="font-size: 22px; line-height: 1.25; font-weight: 600">Readable in full sun</div>
-</a>
-<a href="work.html" style="display: flex; flex-direction: column; gap: 16px; text-decoration: none">
-<div style="position: relative; height: 380px; border-radius: 16px; overflow: hidden"><img src="assets/adscreen.jpg" alt="Elevated LED screen showing sponsor content at a fan zone" style="width: 100%; height: 100%; object-fit: cover; display: block"><span style="position: absolute; top: 16px; left: 16px; padding: 6px 12px; border-radius: 999px; background: rgba(8,8,12,0.72); border: 1px solid rgba(255,255,255,0.18); font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase">Activation</span></div>
-<div style="font-size: 22px; line-height: 1.25; font-weight: 600">A sponsor screen above the crowd</div>
-</a>
-</div>
-<a href="work.html" style="align-self: flex-start; font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; text-decoration: none">All sporting work →</a>
-</div>
-<div style="padding: 48px; background: #121218; border: 1px solid rgba(255,255,255,0.08); border-radius: 24px; display: flex; flex-direction: column; gap: 40px">
-<div style="display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 24px; align-items: start">
-<div style="grid-column: span 6; display: flex; flex-direction: column; gap: 18px">
-<div style="font-size: 13px; font-weight: 600; letter-spacing: 0.08em; color: #E3262B">05</div>
-<h2 style="margin: 0; font-size: 48px; line-height: 1.05; letter-spacing: -0.02em; font-weight: 600">Government &amp; civic</h2>
-<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #A6A6B0">Events attended by officials, often in historic or protected spaces. Accessible, security-aware and broadcast-ready, with no mark left behind.</p>
-</div>
-<div style="grid-column: 9 / span 4; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; padding-top: 28px">
-<span style="padding: 8px 14px; border-radius: 999px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); font-size: 12px; font-weight: 600; letter-spacing: 0.04em; white-space: nowrap">Accessibility</span>
-<span style="padding: 8px 14px; border-radius: 999px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); font-size: 12px; font-weight: 600; letter-spacing: 0.04em; white-space: nowrap">Secure comms</span>
-<span style="padding: 8px 14px; border-radius: 999px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); font-size: 12px; font-weight: 600; letter-spacing: 0.04em; white-space: nowrap">Broadcast</span>
-<span style="padding: 8px 14px; border-radius: 999px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); font-size: 12px; font-weight: 600; letter-spacing: 0.04em; white-space: nowrap">Overflow screens</span>
-</div>
-</div>
-<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px">
-<a href="work.html" style="display: flex; flex-direction: column; gap: 16px; text-decoration: none">
-<div style="position: relative; height: 380px; border-radius: 16px; overflow: hidden"><img src="assets/capitol.jpg" alt="Large LED screen on the National Mall with the Capitol in the distance" style="width: 100%; height: 100%; object-fit: cover; display: block"><span style="position: absolute; top: 16px; left: 16px; padding: 6px 12px; border-radius: 999px; background: rgba(8,8,12,0.72); border: 1px solid rgba(255,255,255,0.18); font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase">Civic</span></div>
-<div style="font-size: 22px; line-height: 1.25; font-weight: 600">On the Mall, gone without a mark</div>
-</a>
-<a href="work.html" style="display: flex; flex-direction: column; gap: 16px; text-decoration: none">
-<div style="position: relative; height: 380px; border-radius: 16px; overflow: hidden"><img src="assets/field.jpg" alt="Wide view of a public celebration on an open field" style="width: 100%; height: 100%; object-fit: cover; display: block"><span style="position: absolute; top: 16px; left: 16px; padding: 6px 12px; border-radius: 999px; background: rgba(8,8,12,0.72); border: 1px solid rgba(255,255,255,0.18); font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase">Civic</span></div>
-<div style="font-size: 22px; line-height: 1.25; font-weight: 600">A public celebration, end to end</div>
-</a>
-</div>
-<a href="work.html" style="align-self: flex-start; font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; text-decoration: none">All civic work →</a>
-</div>
+<main id="main">
+
+<section class="sec events">
+  <div class="wrap">
+
+    <article class="panel lg bordered ev" id="galas" aria-labelledby="galas-title">
+      <div class="ev-head">
+        <div class="ev-text">
+          <div class="num">01</div>
+          <h2 class="subtitle" id="galas-title">Galas &amp; conferences</h2>
+          <p>A cue-driven program where every transition is rehearsed, with the composure to adapt when a live evening goes off script.</p>
+        </div>
+        <ul class="chips" role="list">
+          <li class="chip">Show-calling</li>
+          <li class="chip">IMAG</li>
+          <li class="chip">Stage lighting</li>
+          <li class="chip">Confidence monitors</li>
+          <li class="chip">Rehearsed transitions</li>
+        </ul>
+      </div>
+      <div class="grid cols-2">
+        <a class="card" href="work.html?filter=galas"><div class="media"><img src="assets/ballroom.jpg" alt="Ballroom set for a conference with a camera jib over the room" loading="lazy"><span class="tag">Conference</span></div><h3 class="h3">Every cue, rehearsed</h3></a>
+        <a class="card" href="work.html?filter=galas"><div class="media"><img src="assets/hero_hall.jpg" alt="Orchestra concert in a grand hall framed by an LED backdrop" loading="lazy"><span class="tag">Gala</span></div><h3 class="h3">A holiday concert in a grand hall</h3></a>
+      </div>
+      <a class="link-arrow" href="work.html?filter=galas">All gala work →</a>
+    </article>
+
+    <article class="panel lg bordered ev" id="corporate" aria-labelledby="corporate-title">
+      <div class="ev-head">
+        <div class="ev-text">
+          <div class="num">02</div>
+          <h2 class="subtitle" id="corporate-title">Corporate &amp; forums</h2>
+          <p>Launches, openings and policy forums in front of press. The message lands the same in the room and on the webcast.</p>
+        </div>
+        <ul class="chips" role="list">
+          <li class="chip">4K broadcast chains</li>
+          <li class="chip">Clean press feed</li>
+          <li class="chip">Dual-mix audio</li>
+          <li class="chip">Webcast</li>
+        </ul>
+      </div>
+      <div class="grid cols-2">
+        <a class="card" href="work.html?filter=corporate"><div class="media"><img src="assets/forum.jpg" alt="Forum stage with a curved LED wall" loading="lazy"><span class="tag">Corporate</span></div><h3 class="h3">Built for the record</h3></a>
+        <a class="card" href="work.html?filter=corporate"><div class="media"><img src="assets/ledwall.jpg" alt="Curved LED wall with presentation content" loading="lazy"><span class="tag">Corporate</span></div><h3 class="h3">A curved wall for a policy launch</h3></a>
+      </div>
+      <a class="link-arrow" href="work.html?filter=corporate">All corporate work →</a>
+    </article>
+
+    <article class="panel lg bordered ev" id="festivals" aria-labelledby="festivals-title">
+      <div class="ev-head">
+        <div class="ev-text">
+          <div class="num">03</div>
+          <h2 class="subtitle" id="festivals-title">Festivals &amp; concerts</h2>
+          <p>Multi-stage, outdoor and multi-day. Display and audio that reach the whole crowd and hold up to weather and power.</p>
+        </div>
+        <ul class="chips" role="list">
+          <li class="chip">Large-format LED</li>
+          <li class="chip">Distributed video</li>
+          <li class="chip">Fiber backbones</li>
+          <li class="chip">Endurance crews</li>
+        </ul>
+      </div>
+      <div class="grid cols-2">
+        <a class="card" href="work.html?filter=festivals"><div class="media"><img src="assets/festcrowd.jpg" alt="Festival crowd facing a main stage flanked by two LED screens" loading="lazy"><span class="tag">Festival</span></div><h3 class="h3">One image, a mile wide</h3></a>
+        <a class="card" href="work.html?filter=festivals"><div class="media"><img src="assets/festscreen.jpg" alt="Festival crowd in front of an outdoor LED screen at dusk" loading="lazy"><span class="tag">Festival</span></div><h3 class="h3">Sunset on the second stage</h3></a>
+      </div>
+      <a class="link-arrow" href="work.html?filter=festivals">All festival work →</a>
+    </article>
+
+    <article class="panel lg bordered ev" id="sporting" aria-labelledby="sporting-title">
+      <div class="ev-head">
+        <div class="ev-text">
+          <div class="num">04</div>
+          <h2 class="subtitle" id="sporting-title">Sporting &amp; activations</h2>
+          <p>Fan zones and sponsor spaces, including sites with no screens until ours roll in. Bright, fast to deploy and mobile.</p>
+        </div>
+        <ul class="chips" role="list">
+          <li class="chip">Daylight-readable</li>
+          <li class="chip">Fast deploy</li>
+          <li class="chip">Instant replay</li>
+          <li class="chip">LED trucks</li>
+        </ul>
+      </div>
+      <div class="grid cols-2">
+        <a class="card" href="work.html?filter=sporting"><div class="media"><img src="assets/ballpark.jpg" alt="Fans watching a ballgame on an outdoor LED screen" loading="lazy"><span class="tag">Sporting</span></div><h3 class="h3">Readable in full sun</h3></a>
+        <a class="card" href="work.html?filter=sporting"><div class="media"><img src="assets/adscreen.jpg" alt="Elevated LED screen showing sponsor content at a fan zone" loading="lazy"><span class="tag">Activation</span></div><h3 class="h3">A sponsor screen above the crowd</h3></a>
+      </div>
+      <a class="link-arrow" href="work.html?filter=sporting">All sporting work →</a>
+    </article>
+
+    <article class="panel lg bordered ev" id="civic" aria-labelledby="civic-title">
+      <div class="ev-head">
+        <div class="ev-text">
+          <div class="num">05</div>
+          <h2 class="subtitle" id="civic-title">Government &amp; civic</h2>
+          <p>Events attended by officials, often in historic or protected spaces. Accessible, security-aware and broadcast-ready, with no mark left behind.</p>
+        </div>
+        <ul class="chips" role="list">
+          <li class="chip">Accessibility</li>
+          <li class="chip">Secure comms</li>
+          <li class="chip">Broadcast</li>
+          <li class="chip">Overflow screens</li>
+        </ul>
+      </div>
+      <div class="grid cols-2">
+        <a class="card" href="work.html?filter=civic"><div class="media"><img src="assets/capitol.jpg" alt="Large LED screen on the National Mall with the Capitol in the distance" loading="lazy"><span class="tag">Civic</span></div><h3 class="h3">On the Mall, gone without a mark</h3></a>
+        <a class="card" href="work.html?filter=civic"><div class="media"><img src="assets/field.jpg" alt="Wide view of a public celebration on an open field" loading="lazy"><span class="tag">Civic</span></div><h3 class="h3">A public celebration, end to end</h3></a>
+      </div>
+      <a class="link-arrow" href="work.html?filter=civic">All civic work →</a>
+    </article>
+
+  </div>
 </section>
 
-<section style="flex-grow: 1; padding: 120px 64px; background: radial-gradient(ellipse 60% 70% at 50% 100%, rgba(227,38,43,0.22) 0%, rgba(8,8,12,0) 70%); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 28px; text-align: center">
-<h2 style="margin: 0; font-size: 96px; line-height: 0.98; letter-spacing: -0.02em; font-weight: 700; text-transform: uppercase">Which one<br>is yours?</h2>
-<p style="margin: 0; font-size: 18px; line-height: 1.6; color: #D6D6DD">Tell us the event, and we’ll walk you through how we’d build and run it.</p>
-<div style="display: flex; gap: 12px; margin-top: 8px">
-<a href="mailto:hello@controlvideo.com" style="height: 52px; padding: 0 26px; display: flex; align-items: center; background: #E3262B; color: #FFFFFF; text-decoration: none; border-radius: 999px; font-size: 14px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase">Email us</a>
-<a href="tel:+13012773429" style="height: 52px; padding: 0 26px; display: flex; align-items: center; border: 1px solid rgba(255,255,255,0.5); text-decoration: none; border-radius: 999px; font-size: 14px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase">Call (301) 277-3429</a>
-</div>
+<section class="cta">
+  <div class="wrap">
+    <h2>Which one<br>is yours?</h2>
+    <p class="lede">Tell us the event, and we’ll walk you through how we’d build and run it.</p>
+    <div class="btn-row">
+      <a class="btn btn-primary" href="mailto:hello@controlvideo.com">Email us</a>
+      <a class="btn btn-ghost" href="tel:+13012773429">Call (301) 277-3429</a>
+    </div>
+  </div>
 </section>
 
-<footer style="flex-shrink: 0; padding: 56px 64px 40px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column; gap: 48px">
-<div style="display: flex; justify-content: space-between; align-items: flex-start">
-<div style="display: flex; flex-direction: column; gap: 14px">
-<div style="display: flex; align-items: center; gap: 14px"><svg width="40" height="40" viewBox="0 0 32 32" aria-hidden="true"><path d="M24.5 7.5 A12 12 0 1 0 24.5 24.5" fill="none" stroke="currentColor" stroke-width="4.6"></path><path d="M13 10.2 L23 16 L13 21.8 Z" fill="#E3262B"></path></svg><span style="font-size: 26px; font-weight: 600; letter-spacing: -0.02em">Control Video</span></div>
-<div style="font-size: 14px; line-height: 1.6; color: #A6A6B0">Live event production · Brentwood, MD · Since 2015</div>
-</div>
-<div style="display: flex; gap: 80px; font-size: 15px">
-<div style="display: flex; flex-direction: column; gap: 12px"><a href="work.html" style="text-decoration: none">Work</a><a href="events.html" style="text-decoration: none">Events</a><a href="technology.html" style="text-decoration: none">Technology</a></div>
-<div style="display: flex; flex-direction: column; gap: 12px"><a href="tel:+13012773429" style="text-decoration: none">(301) 277-3429</a><a href="mailto:hello@controlvideo.com" style="text-decoration: none">hello@controlvideo.com</a></div>
-<div style="display: flex; flex-direction: column; gap: 12px"><a href="mailto:hello@controlvideo.com?subject=Careers" style="text-decoration: none">Careers</a><a href="led.html" style="text-decoration: none">LED Truck Company ↗</a></div>
-</div>
-</div>
-<div style="font-size: 13px; color: #A6A6B0">© 2026 Control Video, LLC</div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a class="brand" href="home.html" aria-label="Control Video home"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M24.5 7.5 A12 12 0 1 0 24.5 24.5" fill="none" stroke="currentColor" stroke-width="4.6"/><path d="M13 10.2 L23 16 L13 21.8 Z" fill="#E3262B"/></svg><span>Control Video</span></a>
+        <p class="muted" style="font-size:14px">Live event production · Brentwood, MD · Since 2015</p>
+      </div>
+      <nav class="footer-links" aria-label="Footer">
+        <div><a href="work.html">Work</a><a href="events.html">Events</a><a href="technology.html">Technology</a></div>
+        <div><a href="tel:+13012773429">(301) 277-3429</a><a href="mailto:hello@controlvideo.com">hello@controlvideo.com</a></div>
+        <div><a href="mailto:hello@controlvideo.com?subject=Careers">Careers</a><a href="led.html">LED Truck Company ↗</a></div>
+      </nav>
+    </div>
+    <p class="fine">© 2026 Control Video, LLC</p>
+  </div>
 </footer>
 
-</div>
-</x-dc>
-<script>
-(function(){function fit(){var r=document.querySelector('x-dc>div');if(!r)return;r.style.zoom=Math.min(1.25,document.documentElement.clientWidth/1440);}fit();window.addEventListener('resize',fit);})();
-</script>
+<script src="assets/site.js" defer></script>
 </body>
 </html>
