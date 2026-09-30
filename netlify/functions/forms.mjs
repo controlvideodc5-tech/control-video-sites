@@ -25,9 +25,10 @@ const ALLOWED_EXT = /\.(pdf|png|jpe?g|gif|webp|heic|svg|tiff?|dwg|dxf|vwx|skp|do
 const CHOICES = {
   site: ['Control Video', 'LED Truck Co.'],
   eventType: ['Gala / conference', 'Corporate / forum', 'Festival / concert', 'Sporting / activation', 'Government / civic', 'LED truck rental', 'Other'],
-  audience: ['Under 100', '100–500', '500–2,000', '2,000–10,000', '10,000+', 'Not sure yet'],
-  budget: ['Under $10k', '$10k–$25k', '$25k–$75k', '$75k–$150k', '$150k+', 'Not sure yet'],
-  services: ['LED walls', 'Projection', 'Cameras / IMAG', 'Livestream / webcast', 'Audio', 'Lighting', 'LED truck or trailer', 'Show calling / crew'],
+  headcountIs: ['Confirmed', 'Capacity cap', 'Best guess'],
+  setting: ['Indoor', 'Outdoor', 'Both'],
+  seeHear: ['LED wall', 'Projection', 'Screens / TVs', 'Cameras on screen', 'Livestream', 'Recording', 'Audio', 'Lighting', 'Stage', 'LED truck or trailer', 'Not sure yet'],
+  budget: ['Under $10k', '$10k–25k', '$25k–50k', '$50k+', 'Not set'],
   roles: ['Video engineer', 'LED technician', 'Camera operator', 'Audio', 'Lighting', 'Project / production manager', 'Driver / rigger (LED trucks)', 'Other'],
   availability: ['Full-time', 'Freelance / crew call', 'Either'],
   experience: ['Under 1', '1–3', '3–7', '7+'],
@@ -35,6 +36,7 @@ const CHOICES = {
 
 // Maps a validated submission to Airtable fields, per path.
 const BUILD = {
+  // The "5 things we need to know about your event" sheet.
   inquiry(data, common) {
     const links = clean(data.links, 4000);
     return {
@@ -42,11 +44,16 @@ const BUILD = {
       Organization: clean(data.organization, 200) || undefined,
       Site: pick(data.site, CHOICES.site),
       'Event type': pick(data.eventType, CHOICES.eventType),
-      'Event date': /^\d{4}-\d{2}-\d{2}$/.test(data.eventDate || '') ? data.eventDate : undefined,
+      Headcount: clean(data.headcount, 100) || undefined,
+      'Headcount is': pick(data.headcountIs, CHOICES.headcountIs),
       'Venue / location': clean(data.venue, 300) || undefined,
-      'Audience size': pick(data.audience, CHOICES.audience),
-      Budget: pick(data.budget, CHOICES.budget),
-      Services: pickMany(data.services, CHOICES.services),
+      Setting: pick(data.setting, CHOICES.setting),
+      'Show date and time': clean(data.showTime, 200) || undefined,
+      'We can get in': clean(data.loadIn, 200) || undefined,
+      'Must be out by': clean(data.outBy, 200) || undefined,
+      'See and hear': pickMany(data.seeHear, CHOICES.seeHear),
+      "Can't go wrong": clean(data.mustLand, 5000) || undefined,
+      'Budget range': pick(data.budget, CHOICES.budget),
       Details: common.details || undefined,
       'Shared links': links || undefined,
       details: undefined,
@@ -169,15 +176,20 @@ async function submit(kind, req) {
   // 3. Content checks.
   const name = clean(data.name, 120);
   const email = clean(data.email, 200);
+  const phone = clean(data.phone, 40);
   if (!name) throw new HttpError(400, 'Please add your name.');
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) throw new HttpError(400, 'Please add a valid email address.');
+  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
+  // Project inquiries accept email or phone (as on the printed sheet); candidates need an email.
+  if (kind === 'careers' || email || !phone) {
+    if (!emailOk) throw new HttpError(400, kind === 'careers' ? 'Please add a valid email address.' : 'Please add an email address or phone number.');
+  }
   const details = clean(data.details, 10000);
   if ((details.match(/https?:\/\//g) || []).length > 8) throw new HttpError(400, 'Please put links in the links box.');
 
   const fields = BUILD[kind](data, {
     Name: name,
-    Email: email,
-    Phone: clean(data.phone, 40) || undefined,
+    Email: email || undefined,
+    Phone: phone || undefined,
     'Source page': /^https?:\/\//.test(data.page || '') ? String(data.page).slice(0, 500) : undefined,
     details,
   });
