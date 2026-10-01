@@ -99,6 +99,7 @@ h1,h2,h3,p,figure,blockquote{margin:0}
 /* Rounded lead image under the intro (both home pages) */
 .media.lead-img{height:clamp(280px, 43vw, 620px);border-radius:24px;margin:clamp(32px, 3.3vw, 48px) 0 0}
 .lead-img .tag{top:24px;left:24px}
+.lead-section{padding-bottom:clamp(40px, 5vw, 72px)}
 
 /* Plain intro (no background image) */
 .intro{padding-block:clamp(40px, 5vw, 72px) 0;display:flex;justify-content:space-between;align-items:flex-end;gap:clamp(28px, 4.45vw, 64px)}
