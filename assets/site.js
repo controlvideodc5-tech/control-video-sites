@@ -175,6 +175,12 @@
     });
   }
 
+  // Fallback when the form API can't be reached: open an email with everything filled in.
+  function openEmail(subject, rows) {
+    var body = rows.filter(function (r) { return r[1]; }).map(function (r) { return r[0] + ': ' + r[1]; }).join('\n');
+    location.href = 'mailto:' + EMAIL + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+  }
+
   function fmtSize(n) { return n < 1048576 ? Math.max(1, Math.round(n / 1024)) + ' KB' : (n / 1048576).toFixed(1) + ' MB'; }
 
   function renderFileList(list, files) {
@@ -300,7 +306,14 @@
     function loadChallenge() {
       var q = dlg.querySelector('.t-q');
       q.textContent = 'Loading question…';
-      getChallenge(kind).then(function (c) { challenge = c; q.textContent = c.question; }, function () { challenge = null; q.textContent = 'Quick check unavailable'; });
+      q.closest('.field').hidden = false;
+      submitBtn.textContent = 'Send it';
+      getChallenge(kind).then(function (c) { challenge = c; q.textContent = c.question; }, function () {
+        // Online sending isn't available: drop the check and send by email instead.
+        challenge = null;
+        q.closest('.field').hidden = true;
+        submitBtn.textContent = 'Email it';
+      });
     }
     function showError(msg, el) {
       errBox.textContent = msg;
@@ -321,8 +334,15 @@
       var name = form.elements.name, email = form.elements.email, answer = form.elements.answer;
       if (!name.value.trim()) return showError('Please add your name.', name);
       if (!email.value.trim() || !email.validity.valid) return showError('Please add a valid email address.', email);
+      if (!challenge) {
+        openEmail((kind === 'careers' ? 'Careers: ' : 'Project inquiry: ') + fd.get('name'), [
+          ['Name', fd.get('name')], ['Email', fd.get('email')], ['Phone', fd.get('phone')],
+          ['Role', fd.get('role')], ['Event date', fd.get('eventDate')], ['Interested in', fd.get('eventType')],
+          [kind === 'careers' ? 'About' : 'Message', fd.get('details')], ['Link', fd.get('links')], ['From page', location.href]
+        ]);
+        return showError('We’ve opened an email with your message — just hit send.' + (files.length ? ' Attach your files to that email.' : ''));
+      }
       if (!answer.value.trim()) return showError('Please answer the quick check.', answer);
-      if (!challenge) return showError('We couldn’t load the quick check. Email ' + EMAIL + ' or call ' + PHONE + ' instead.');
 
       var payload = cfg.payload(fd);
       payload.name = fd.get('name'); payload.email = fd.get('email'); payload.phone = fd.get('phone');
@@ -384,7 +404,7 @@
 
   var bot = (function () {
     var panel, log, chips, entry, input, sendBtn, opener, prefillNow;
-    var answers, files, challenge, step, busy;
+    var answers, files, challenge, step, busy, offline;
 
     var SEE_HEAR = ['LED wall', 'Projection', 'Screens / TVs', 'Cameras on screen', 'Livestream', 'Recording', 'Audio', 'Lighting', 'Stage', 'LED truck or trailer', 'Not sure yet'];
 
@@ -406,13 +426,19 @@
       { key: 'budget', say: ['Last question — a budget range, if you have one?'], chips: ['Under $10k', '$10k–25k', '$25k–50k', '$50k+', 'Not set'] },
       { key: 'files', say: ['Got a floor plan or run of show? Send it over — or paste a link.'], upload: true },
       { key: 'answer', say: function () { return ['One quick check to keep the robots out: ' + (challenge ? challenge.question : 'loading…')]; }, text: 'Answer', number: true, required: true },
-      { key: 'confirm', say: function () { return ['Here’s what I’ve got:', summary(), 'Send it to the team?']; }, chips: ['Send it', 'Start over'] }
+      { key: 'confirm',
+        say: function () {
+          return ['Here’s what I’ve got:', summary(), offline
+            ? 'Online sending isn’t switched on yet, so I’ll open an email with all of this filled in — just hit send.' + (files.length ? ' Attach your files to that email.' : '')
+            : 'Send it to the team?'];
+        },
+        chips: function () { return offline ? ['Open email', 'Start over'] : ['Send it', 'Start over']; } }
     ];
 
     function first(n) { return String(n || '').trim().split(/\s+/)[0]; }
 
-    function summary() {
-      var rows = [
+    function summaryRows() {
+      return [
         ['Name', answers.name + (answers.organization ? ', ' + answers.organization : '')],
         ['Reach you at', answers.contact],
         ['People', [answers.headcount, answers.headcountIs && answers.headcountIs.toLowerCase()].filter(Boolean).join(' · ')],
@@ -421,8 +447,13 @@
         ['See & hear', (answers.seeHear || []).join(', ')],
         ['Can’t go wrong', answers.mustLand],
         ['Budget', answers.budget],
-        ['Files', files.filter(function (f) { return !f.error; }).map(function (f) { return f.file.name; }).concat(answers.links ? [answers.links] : []).join(', ')]
+        ['Files', files.filter(function (f) { return !f.error; }).map(function (f) { return f.file.name; }).concat(answers.links ? [answers.links] : []).join(', ')],
+        ['Note', answers.details]
       ].filter(function (r) { return r[1]; });
+    }
+
+    function summary() {
+      var rows = summaryRows();
       return { html: '<dl class="bot-summary">' + rows.map(function (r) { return '<dt>' + esc(r[0]) + '</dt><dd>' + esc(r[1]) + '</dd>'; }).join('') + '</dl>' };
     }
 
@@ -516,7 +547,7 @@
       input.type = s.number ? 'number' : 'text';
       input.inputMode = s.number ? 'numeric' : 'text';
       input.placeholder = s.upload ? 'Paste a link, or tap Add files' : (s.text || '');
-      if (s.chips) s.chips.forEach(function (c) { chip(c, c === 'Send it' ? 'primary' : '', function () { reply(c); }); });
+      if (s.chips) (typeof s.chips === 'function' ? s.chips() : s.chips).forEach(function (c) { chip(c, c === 'Send it' || c === 'Open email' ? 'primary' : '', function () { reply(c); }); });
       if (s.multi) {
         var picked = [];
         s.multi.forEach(function (c) {
@@ -547,7 +578,7 @@
         var problem = s.check(value);
         if (problem) return botSays([problem], function () { showStepInputs(s); });
       }
-      if (s.key === 'confirm') return value === 'Send it' ? send() : start();
+      if (s.key === 'confirm') return value === 'Send it' ? send() : value === 'Open email' ? emailIt() : start();
       if (s.upload) { if (value) answers.links = value; }
       else answers[s.key] = value === null ? '' : value;
       step++;
@@ -557,8 +588,23 @@
     function ask() {
       while (SCRIPT[step] && SCRIPT[step].when && !SCRIPT[step].when()) step++;
       var s = SCRIPT[step];
+      // The quick check needs the online form. If it can't be reached, skip it and finish by email.
+      if (s.key === 'answer' && !challenge && !offline) {
+        busy = true;
+        getChallenge('inquiry').then(function (c) { challenge = c; }, function () { offline = true; })
+          .then(function () { busy = false; if (offline) step++; ask(); });
+        return;
+      }
       var lines = typeof s.say === 'function' ? s.say() : s.say;
       botSays(lines, function () { showStepInputs(s); });
+    }
+
+    function emailIt() {
+      openEmail('Project inquiry: ' + answers.name, summaryRows().concat([['Came from', '5-things bot · ' + location.href]]));
+      botSays(['Your email app should be opening with everything filled in. If it doesn’t, write to ' + EMAIL + ' or call ' + PHONE + '.'], function () {
+        chip('Close', 'primary', function () { panel.close(); });
+        chip('Open email again', '', emailIt);
+      });
     }
 
     function send() {
@@ -595,8 +641,9 @@
               botSays([msg], ask);
             });
           } else {
-            botSays([msg + ' You can also email ' + EMAIL + ' or call ' + PHONE + '.'], function () {
+            botSays([msg + ' You can try again, or send it all by email instead.'], function () {
               chip('Try again', 'primary', send);
+              chip('Open email', '', emailIt);
             });
           }
         });
@@ -612,6 +659,7 @@
       step = 0;
       log.innerHTML = '';
       challenge = null;
+      offline = false;
       getChallenge('inquiry').then(function (c) { challenge = c; }, function () {});
       ask();
     }
