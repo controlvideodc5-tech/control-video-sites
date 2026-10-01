@@ -27,8 +27,8 @@
 window.CV_BOT_SCRIPT = {
 
   header: {
-    title: 'Plan your event',
-    shortTitle: 'Plan your event',                   // used on phones
+    title: 'Event Details',
+    shortTitle: 'Event Details',                   // used on phones
     subtitle: 'A few details help {site} build the right plan',
     messageButton: 'Just send a message'             // top-right; switches to the contact form
   },

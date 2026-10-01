@@ -468,7 +468,7 @@
     function build() {
       panel = document.createElement('dialog');
       panel.className = 'bot';
-      panel.setAttribute('aria-label', 'Planning bot: 5 things we need to know about your event');
+      panel.setAttribute('aria-label', fill(T.header.title));
       panel.innerHTML =
         '<div class="bot-head"><div><strong><span class="long">' + esc(fill(T.header.title)) + '</span><span class="short">' + esc(fill(T.header.shortTitle)) + '</span></strong><span class="sub">' + esc(fill(T.header.subtitle)) + '</span></div>' +
           '<button type="button" class="bot-message">' + esc(T.header.messageButton) + '</button>' +
