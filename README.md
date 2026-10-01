@@ -10,6 +10,9 @@ Static HTML for the two sister sites, plus a gateway page for internal review.
 
 Images, the self-hosted Sora font, and the shared `site.css` / `site.js` live in `assets/`.
 
+## Switching between the sites
+A two-position switch beside the logo (built by `assets/site.js`) flips between Control Video (dark) and LED Truck Co. (light) with a circular color wipe, landing on the matching page: Home ↔ LED home, Technology ↔ Fleet, Events ↔ LED “Built for the crowd”.
+
 ## Status
 Draft for internal review — responsive from 375px phones up to 1440px desktop, and marked `noindex`. Remove the `robots` meta tags, `robots.txt` and the `X-Robots-Tag` header in `netlify.toml` before launch.
 

@@ -43,6 +43,78 @@
   });
 })();
 
+// Sister-site switch: a two-position toggle beside the logo. Control Video is the dark site and
+// LED Truck Co. the light one, so switching "flips the lights": the other site's color grows
+// out of the switch in a circle, then the matching page fades in underneath.
+(function () {
+  var header = document.querySelector('.site-header .wrap');
+  var brand = header && header.querySelector('.brand');
+  if (!brand) return;
+  var onLed = document.body.classList.contains('light');
+  var page = location.pathname.split('/').pop() || 'index.html';
+  // Where each page lands on the sister site.
+  var TO_LED = { 'home.html': 'led.html', 'technology.html': 'led-fleet.html', 'events.html': 'led.html#events' };
+  var TO_CV = { 'led.html': 'home.html', 'led-fleet.html': 'technology.html#mobile' };
+  var target = onLed ? (TO_CV[page] || 'home.html') : (TO_LED[page] || 'led.html');
+  if (onLed && location.hash === '#events') target = 'events.html';
+  var CV_MARK = '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M24.5 7.5 A12 12 0 1 0 24.5 24.5" fill="none" stroke="currentColor" stroke-width="4.6"/><path d="M13 10.2 L23 16 L13 21.8 Z" fill="#E3262B"/></svg>';
+  var LED_MARK = '<svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="5" width="26" height="17" rx="2.5" fill="none" stroke="currentColor" stroke-width="3.2"/><path d="M13.2 9.4 L20.4 13.5 L13.2 17.6 Z" fill="#E3262B"/><circle cx="9" cy="27" r="2.4" fill="currentColor"/><circle cx="23" cy="27" r="2.4" fill="currentColor"/></svg>';
+
+  var sw = document.createElement('nav');
+  sw.className = 'brand-switch' + (onLed ? ' is-led' : '');
+  sw.setAttribute('aria-label', 'Our companies');
+  sw.innerHTML = '<span class="knob" aria-hidden="true"></span>' +
+    '<a href="' + (onLed ? target : page) + '" aria-label="Control Video"' + (onLed ? '' : ' aria-current="true"') + '>' + CV_MARK + '</a>' +
+    '<a href="' + (onLed ? page : target) + '" aria-label="LED Truck Co."' + (onLed ? ' aria-current="true"' : '') + '>' + LED_MARK + '</a>' +
+    '<span class="hint" aria-hidden="true">' + (onLed ? 'Switch to Control Video' : 'Switch to LED Truck Co.') + '</span>';
+  brand.insertAdjacentElement('afterend', sw);
+
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var other = sw.querySelector('a:not([aria-current])');
+  var current = sw.querySelector('a[aria-current]');
+  current.addEventListener('click', function (e) { e.preventDefault(); });
+  other.addEventListener('click', function (e) {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || reduce) return;
+    e.preventDefault();
+    var href = other.getAttribute('href');
+    var color = onLed ? '#08080C' : '#FFFFFF';
+    var r = other.getBoundingClientRect();
+    var x = r.left + r.width / 2, y = r.top + r.height / 2;
+    var radius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+    sw.style.setProperty('--to', onLed ? '0px' : '40px');
+    sw.classList.toggle('is-led');
+    var veil = document.createElement('div');
+    veil.className = 'flip-veil';
+    veil.style.background = color;
+    document.body.appendChild(veil);
+    var anim = veil.animate(
+      [{ clipPath: 'circle(0px at ' + x + 'px ' + y + 'px)' }, { clipPath: 'circle(' + radius + 'px at ' + x + 'px ' + y + 'px)' }],
+      { duration: 520, easing: 'cubic-bezier(.6,0,.2,1)', fill: 'forwards' }
+    );
+    try { sessionStorage.setItem('cv-flip', color); } catch (err) {}
+    anim.onfinish = function () { location.href = href; };
+  });
+
+  // Arriving from a flip: start covered in this site's color, then fade in.
+  var arriving = null;
+  try { arriving = sessionStorage.getItem('cv-flip'); sessionStorage.removeItem('cv-flip'); } catch (err) {}
+  if (arriving && !reduce) {
+    var veilIn = document.createElement('div');
+    veilIn.className = 'flip-veil';
+    veilIn.style.background = arriving;
+    document.body.appendChild(veilIn);
+    var gone = function () { if (veilIn.parentNode) veilIn.remove(); };
+    if (veilIn.animate) veilIn.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 380, delay: 60, easing: 'ease-out', fill: 'forwards' }).onfinish = gone;
+    // Never leave the page covered, even if the animation doesn't run.
+    setTimeout(gone, 900);
+  }
+  // Coming back with the browser's back button: drop any leftover veil.
+  window.addEventListener('pageshow', function (e) {
+    if (e.persisted) document.querySelectorAll('.flip-veil').forEach(function (v) { v.remove(); });
+    sw.classList.toggle('is-led', onLed);
+  });
+})();
+
 // Contact forms and the "5 things" bot. All three post to the Netlify function
 // (netlify/functions/forms.mjs), which saves to Airtable:
 //   - 5-things bot: every project call-to-action ("Start a project", "Start a booking", rig cards…)
