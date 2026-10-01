@@ -57,8 +57,8 @@
   var TO_CV = { 'led.html': 'home.html', 'led-fleet.html': 'technology.html#mobile' };
   var target = onLed ? (TO_CV[page] || 'home.html') : (TO_LED[page] || 'led.html');
   if (onLed && location.hash === '#events') target = 'events.html';
-  var CV_MARK = '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M24.5 7.5 A12 12 0 1 0 24.5 24.5" fill="none" stroke="currentColor" stroke-width="4.6"/><path d="M13 10.2 L23 16 L13 21.8 Z" fill="#E3262B"/></svg>';
-  var LED_MARK = '<svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="5" width="26" height="17" rx="2.5" fill="none" stroke="currentColor" stroke-width="3.2"/><path d="M13.2 9.4 L20.4 13.5 L13.2 17.6 Z" fill="#E3262B"/><circle cx="9" cy="27" r="2.4" fill="currentColor"/><circle cx="23" cy="27" r="2.4" fill="currentColor"/></svg>';
+  var CV_MARK = '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M24.5 7.5 A12 12 0 1 0 24.5 24.5" fill="none" stroke="currentColor" stroke-width="4.6"/><path d="M14.1 12.1 L20.8 16 L14.1 19.9 Z" fill="#E3262B" stroke="#E3262B" stroke-width="2.2" stroke-linejoin="round"/></svg>';
+  var LED_MARK = '<svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="5" width="26" height="17" rx="2.5" fill="none" stroke="currentColor" stroke-width="3.2"/><path d="M14.1 10.95 L18.6 13.5 L14.1 16.05 Z" fill="#E3262B" stroke="#E3262B" stroke-width="1.8" stroke-linejoin="round"/><circle cx="9" cy="27" r="2.4" fill="currentColor"/><circle cx="23" cy="27" r="2.4" fill="currentColor"/></svg>';
 
   var sw = document.createElement('nav');
   sw.className = 'brand-switch' + (onLed ? ' is-led' : '');
