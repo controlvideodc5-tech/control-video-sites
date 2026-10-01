@@ -32,6 +32,8 @@ Netlify: site `control-video-review` — connect this repo in **Project configur
 - **Contact form** — the bot’s “Just send a message” button switches to a short form (name, email, phone, date, message, files). `#message` opens it.
 - **Careers** — any "Careers" link opens a separate candidate form (name, email, phone, role, about, résumé). `#careers` opens it.
 
+To change what the bot says, edit `assets/bot-script.js` — every line, button and hint is there, with notes on what's safe to change.
+
 Plain email-address links still open email. Uploads: up to 10 files, 5 MB each, plus a link for anything larger.
 
 Submissions go through `netlify/functions/forms.mjs` into the Airtable base **Control Video — Inquiries**:

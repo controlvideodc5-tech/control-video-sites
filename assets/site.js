@@ -406,49 +406,57 @@
     var panel, log, chips, entry, input, sendBtn, opener, prefillNow;
     var answers, files, challenge, step, busy, offline;
 
-    var SEE_HEAR = ['LED wall', 'Projection', 'Screens / TVs', 'Cameras on screen', 'Livestream', 'Recording', 'Audio', 'Lighting', 'Stage', 'LED truck or trailer', 'Not sure yet'];
+    // All wording lives in assets/bot-script.js (window.CV_BOT_SCRIPT) so it can be edited on its own.
+    var T = window.CV_BOT_SCRIPT;
+    var ST = T.steps;
+    function fill(s, extra) {
+      var vals = { site: SITE, name: first(answers && answers.name), phone: PHONE, email: EMAIL, question: challenge ? challenge.question : '…' };
+      for (var k in extra) vals[k] = extra[k];
+      return String(s).replace(/\{(\w+)\}/g, function (m, k) { return k in vals ? vals[k] : m; });
+    }
+    function lines(list) { return list.map(function (l) { return l === '{summary}' ? summary() : fill(l); }); }
 
-    // Each step: say something, then collect an answer by text and/or chips.
+    // The order of the conversation. Wording comes from bot-script.js.
     var SCRIPT = [
-      { key: 'name', say: ['Hi — I’m the ' + SITE + ' planning bot. Five answers get us to a real number, and rough answers are fine.', 'First, what’s your name?'], text: 'Your name', required: true },
-      { key: 'contact', say: function () { return ['Thanks, ' + first(answers.name) + '. What’s the best email or phone number to reach you?']; }, text: 'Email or phone', required: true,
-        check: function (v) { return /@/.test(v) ? (/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v) ? '' : 'That email doesn’t look quite right — try again?') : ((v.match(/\d/g) || []).length >= 7 ? '' : 'Could you give me an email address or a phone number with area code?'); } },
-      { key: 'organization', say: ['What organization is this for?'], text: 'Organization', skip: 'Just me' },
-      { key: 'headcount', n: 1, say: ['1 of 5 · How many people?', 'Your best number, even a range. It sizes the screens, the gear and the crew.'], text: 'e.g. 400, or 300–500', skip: 'Not sure' },
-      { key: 'headcountIs', say: ['Is that confirmed, a capacity cap, or a best guess?'], chips: ['Confirmed', 'Capacity cap', 'Best guess'], when: function () { return !!answers.headcount; } },
-      { key: 'venue', n: 2, say: ['2 of 5 · Where is it?', 'Venue and the specific room.'], text: 'e.g. Mellon Auditorium, main hall', skip: 'Not booked yet' },
-      { key: 'setting', say: ['Indoor, outdoor, or both? It changes power, weather and rigging.'], chips: ['Indoor', 'Outdoor', 'Both'] },
-      { key: 'showTime', n: 3, say: ['3 of 5 · When is the show? Date and time.'], text: 'e.g. Fri Mar 14, 7 pm', skip: 'Not set yet' },
-      { key: 'loadIn', say: ['When can we get in to set up?'], text: 'e.g. Mar 14, 8 am', skip: 'Don’t know yet' },
-      { key: 'outBy', say: ['And when do we have to be out?'], text: 'e.g. midnight', skip: 'Don’t know yet' },
-      { key: 'seeHear', n: 4, say: ['4 of 5 · What should the audience see and hear?', 'Tap everything you know you need, then Done. “Not sure yet” is a fine answer.'], multi: SEE_HEAR },
-      { key: 'mustLand', n: 5, say: ['5 of 5 · What can’t go wrong?', 'The one moment that has to land. We build the plan around it.'], text: 'e.g. The keynote walk-on at 7:30', skip: 'Skip' },
-      { key: 'budget', say: ['Last question — a budget range, if you have one?'], chips: ['Under $10k', '$10k–25k', '$25k–50k', '$50k+', 'Not set'] },
-      { key: 'files', say: ['Got a floor plan or run of show? Send it over — or paste a link.'], upload: true },
-      { key: 'answer', say: function () { return ['One quick check to keep the robots out: ' + (challenge ? challenge.question : 'loading…')]; }, text: 'Answer', number: true, required: true },
+      { key: 'name', say: function () { return lines(ST.name.say); }, text: ST.name.placeholder, required: true },
+      { key: 'contact', say: function () { return lines(ST.contact.say); }, text: ST.contact.placeholder, required: true,
+        check: function (v) { return /@/.test(v) ? (/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v) ? '' : fill(ST.contact.badEmail)) : ((v.match(/\d/g) || []).length >= 7 ? '' : fill(ST.contact.badPhone)); } },
+      { key: 'organization', say: function () { return lines(ST.organization.say); }, text: ST.organization.placeholder, skip: ST.organization.skip },
+      { key: 'headcount', say: function () { return lines(ST.headcount.say); }, text: ST.headcount.placeholder, skip: ST.headcount.skip },
+      { key: 'headcountIs', say: function () { return lines(ST.headcountIs.say); }, chips: ST.headcountIs.options, when: function () { return !!answers.headcount; } },
+      { key: 'venue', say: function () { return lines(ST.venue.say); }, text: ST.venue.placeholder, skip: ST.venue.skip },
+      { key: 'setting', say: function () { return lines(ST.setting.say); }, chips: ST.setting.options },
+      { key: 'showTime', say: function () { return lines(ST.showTime.say); }, text: ST.showTime.placeholder, skip: ST.showTime.skip },
+      { key: 'loadIn', say: function () { return lines(ST.loadIn.say); }, text: ST.loadIn.placeholder, skip: ST.loadIn.skip },
+      { key: 'outBy', say: function () { return lines(ST.outBy.say); }, text: ST.outBy.placeholder, skip: ST.outBy.skip },
+      { key: 'seeHear', say: function () { return lines(ST.seeHear.say); }, multi: ST.seeHear.options },
+      { key: 'mustLand', say: function () { return lines(ST.mustLand.say); }, text: ST.mustLand.placeholder, skip: ST.mustLand.skip },
+      { key: 'budget', say: function () { return lines(ST.budget.say); }, chips: ST.budget.options },
+      { key: 'files', say: function () { return lines(ST.files.say); }, upload: true },
+      { key: 'answer', say: function () { return lines(ST.answer.say); }, text: ST.answer.placeholder, number: true, required: true },
       { key: 'confirm',
         say: function () {
-          return ['Here’s what I’ve got:', summary(), offline
-            ? 'Online sending isn’t switched on yet, so I’ll open an email with all of this filled in — just hit send.' + (files.length ? ' Attach your files to that email.' : '')
-            : 'Send it to the team?'];
+          var l = lines(offline ? ST.confirm.sayEmail : ST.confirm.say);
+          if (offline && files.length) l[l.length - 1] += ' ' + ST.confirm.attachNote;
+          return l;
         },
-        chips: function () { return offline ? ['Open email', 'Start over'] : ['Send it', 'Start over']; } }
+        chips: function () { return [offline ? ST.confirm.emailButton : ST.confirm.sendButton, ST.confirm.restartButton]; } }
     ];
 
     function first(n) { return String(n || '').trim().split(/\s+/)[0]; }
 
     function summaryRows() {
       return [
-        ['Name', answers.name + (answers.organization ? ', ' + answers.organization : '')],
-        ['Reach you at', answers.contact],
-        ['People', [answers.headcount, answers.headcountIs && answers.headcountIs.toLowerCase()].filter(Boolean).join(' · ')],
-        ['Where', [answers.venue, answers.setting].filter(Boolean).join(' · ')],
-        ['When', [answers.showTime, answers.loadIn && 'in ' + answers.loadIn, answers.outBy && 'out by ' + answers.outBy].filter(Boolean).join(' · ')],
-        ['See & hear', (answers.seeHear || []).join(', ')],
-        ['Can’t go wrong', answers.mustLand],
-        ['Budget', answers.budget],
-        ['Files', files.filter(function (f) { return !f.error; }).map(function (f) { return f.file.name; }).concat(answers.links ? [answers.links] : []).join(', ')],
-        ['Note', answers.details]
+        [T.summary.name, answers.name + (answers.organization ? ', ' + answers.organization : '')],
+        [T.summary.contact, answers.contact],
+        [T.summary.people, [answers.headcount, answers.headcountIs && answers.headcountIs.toLowerCase()].filter(Boolean).join(' · ')],
+        [T.summary.where, [answers.venue, answers.setting].filter(Boolean).join(' · ')],
+        [T.summary.when, [answers.showTime, answers.loadIn && T.summary.loadIn + ' ' + answers.loadIn, answers.outBy && T.summary.outBy + ' ' + answers.outBy].filter(Boolean).join(' · ')],
+        [T.summary.seeHear, (answers.seeHear || []).join(', ')],
+        [T.summary.mustLand, answers.mustLand],
+        [T.summary.budget, answers.budget],
+        [T.summary.files, files.filter(function (f) { return !f.error; }).map(function (f) { return f.file.name; }).concat(answers.links ? [answers.links] : []).join(', ')],
+        [T.summary.note, answers.details]
       ].filter(function (r) { return r[1]; });
     }
 
@@ -462,8 +470,8 @@
       panel.className = 'bot';
       panel.setAttribute('aria-label', 'Planning bot: 5 things we need to know about your event');
       panel.innerHTML =
-        '<div class="bot-head"><div><strong><span class="long">5 things we need to know about your event</span><span class="short">5 things about your event</span></strong><span class="sub">' + SITE + ' · rough answers are fine</span></div>' +
-          '<button type="button" class="bot-message">Just send a message</button>' +
+        '<div class="bot-head"><div><strong><span class="long">' + esc(fill(T.header.title)) + '</span><span class="short">' + esc(fill(T.header.shortTitle)) + '</span></strong><span class="sub">' + esc(fill(T.header.subtitle)) + '</span></div>' +
+          '<button type="button" class="bot-message">' + esc(T.header.messageButton) + '</button>' +
           '<button type="button" class="bot-restart" aria-label="Start over"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10a6 6 0 1 0 2-4.5M4 3v3.5h3.5" fill="none" stroke="currentColor" stroke-width="2"/></svg></button>' +
           '<button type="button" class="bot-close" aria-label="Close"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 3l12 12M15 3L3 15" stroke="currentColor" stroke-width="2"/></svg></button></div>' +
         '<div class="bot-log" role="log" aria-live="polite"></div>' +
@@ -493,7 +501,8 @@
         var added = files.slice(before);
         if (!added.length) return;
         userSays(added.map(function (f) { return '📎 ' + f.file.name + (f.error ? ' — ' + f.state : ''); }).join('\n'));
-        botSays(['Got ' + (added.filter(function (f) { return !f.error; }).length || 'none of') + ' ' + (added.length === 1 ? 'it' : 'them') + '. Anything else?'], function () { showStepInputs(SCRIPT[step]); });
+        var ok = added.filter(function (f) { return !f.error; }).length;
+        botSays([fill(!ok ? ST.files.gotNone : ok === 1 ? ST.files.gotOne : ST.files.gotMany)], function () { showStepInputs(SCRIPT[step]); });
       });
     }
 
@@ -546,8 +555,8 @@
       input.value = '';
       input.type = s.number ? 'number' : 'text';
       input.inputMode = s.number ? 'numeric' : 'text';
-      input.placeholder = s.upload ? 'Paste a link, or tap Add files' : (s.text || '');
-      if (s.chips) (typeof s.chips === 'function' ? s.chips() : s.chips).forEach(function (c) { chip(c, c === 'Send it' || c === 'Open email' ? 'primary' : '', function () { reply(c); }); });
+      input.placeholder = s.upload ? ST.files.placeholder : (s.text || '');
+      if (s.chips) (typeof s.chips === 'function' ? s.chips() : s.chips).forEach(function (c) { chip(c, c === ST.confirm.sendButton || c === ST.confirm.emailButton ? 'primary' : '', function () { reply(c); }); });
       if (s.multi) {
         var picked = [];
         s.multi.forEach(function (c) {
@@ -558,27 +567,27 @@
           });
           b.setAttribute('aria-pressed', (answers.preSeeHear || []).indexOf(c) !== -1 ? (picked.push(c), 'true') : 'false');
         });
-        chip('Done', 'primary', function () { reply(picked.length ? picked.slice() : ['Not sure yet']); });
+        chip(ST.seeHear.done, 'primary', function () { reply(picked.length ? picked.slice() : [s.multi[s.multi.length - 1]]); });
       }
       if (s.upload) {
-        chip('Add files', 'primary', function () { panel.querySelector('.bot-file').click(); });
-        chip(files.length ? 'That’s everything' : 'Nothing to send', '', function () { reply(input.value.trim() || ''); });
+        chip(ST.files.addButton, 'primary', function () { panel.querySelector('.bot-file').click(); });
+        chip(files.length ? ST.files.doneButton : ST.files.noneButton, '', function () { reply(input.value.trim() || ''); });
       }
       if (s.skip) chip(s.skip, 'ghost', function () { reply(null); });
-      if (step === 0) chip('Just send a message instead', 'ghost', toMessage);
+      if (step === 0) chip(ST.name.messageInstead, 'ghost', toMessage);
       if (textMode || s.upload) input.focus(); else { var firstChip = chips.querySelector('button'); if (firstChip) firstChip.focus(); }
     }
 
     function reply(value) {
       var s = SCRIPT[step];
       var shown = value === null ? s.skip : Array.isArray(value) ? value.join(', ') : value;
-      if (s.upload && !value) shown = files.length ? 'That’s everything.' : 'Nothing to send.';
+      if (s.upload && !value) shown = files.length ? ST.files.doneButton : ST.files.noneButton;
       if (shown) userSays(shown);
       if (s.check && value) {
         var problem = s.check(value);
         if (problem) return botSays([problem], function () { showStepInputs(s); });
       }
-      if (s.key === 'confirm') return value === 'Send it' ? send() : value === 'Open email' ? emailIt() : start();
+      if (s.key === 'confirm') return value === ST.confirm.sendButton ? send() : value === ST.confirm.emailButton ? emailIt() : start();
       if (s.upload) { if (value) answers.links = value; }
       else answers[s.key] = value === null ? '' : value;
       step++;
@@ -601,9 +610,9 @@
 
     function emailIt() {
       openEmail('Project inquiry: ' + answers.name, summaryRows().concat([['Came from', '5-things bot · ' + location.href]]));
-      botSays(['Your email app should be opening with everything filled in. If it doesn’t, write to ' + EMAIL + ' or call ' + PHONE + '.'], function () {
-        chip('Close', 'primary', function () { panel.close(); });
-        chip('Open email again', '', emailIt);
+      botSays(lines(T.messages.emailOpening), function () {
+        chip(T.messages.closeButton, 'primary', function () { panel.close(); });
+        chip(T.messages.emailAgainButton, '', emailIt);
       });
     }
 
@@ -620,16 +629,16 @@
         answer: answers.answer, ts: challenge && challenge.ts, token: challenge && challenge.token
       };
       var status = null;
-      botSays(['Sending…'], function () {
+      botSays([fill(T.messages.sending)], function () {
         status = log.lastChild;
         submit('inquiry', payload, files, function () {
           var up = files.filter(function (f) { return f.state === 'Uploading…'; })[0];
-          if (up && status) status.textContent = 'Uploading ' + up.file.name + '…';
+          if (up && status) status.textContent = fill(T.messages.uploading, { file: up.file.name });
         }).then(function () {
           if (status) status.remove();
-          botSays(['Got it, ' + first(answers.name) + ' — it’s with our team. The people who will plan and run it will reply within one business day.', 'If it’s urgent, call ' + PHONE + '.'], function () {
-            chip('Close', 'primary', function () { panel.close(); });
-            chip('Start another', '', start);
+          botSays(lines(T.messages.sent), function () {
+            chip(T.messages.closeButton, 'primary', function () { panel.close(); });
+            chip(T.messages.anotherButton, '', start);
           });
         }).catch(function (err) {
           if (status) status.remove();
@@ -641,9 +650,9 @@
               botSays([msg], ask);
             });
           } else {
-            botSays([msg + ' You can try again, or send it all by email instead.'], function () {
-              chip('Try again', 'primary', send);
-              chip('Open email', '', emailIt);
+            botSays([fill(T.messages.error, { error: msg })], function () {
+              chip(T.messages.tryAgainButton, 'primary', send);
+              chip(ST.confirm.emailButton, '', emailIt);
             });
           }
         });
