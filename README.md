@@ -13,6 +13,15 @@ Images, the self-hosted Sora font, and the shared `site.css` / `site.js` live in
 ## Switching between the sites
 A two-position switch beside the logo (built by `assets/site.js`) flips between Control Video (dark) and LED Truck Co. (light) with a circular color wipe, landing on the matching page: Home ↔ LED home, Technology ↔ Fleet, Events ↔ LED “Built for the crowd”.
 
+## Decks
+- `decks/control-video-capabilities.html` → `assets/decks/control-video-capabilities.pdf` (Control Video capabilities, 9 slides)
+- `decks/led-truck-co-fleet.html` → `assets/decks/led-truck-co-fleet.pdf` (LED Truck Co. fleet catalog, 8 slides)
+
+The chat offers the matching PDF after someone sends their details. To update a deck, edit its HTML (same photos and styles as the site), then re-render the PDF:
+```bash
+"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new --no-pdf-header-footer --virtual-time-budget=8000 --print-to-pdf="$PWD/assets/decks/led-truck-co-fleet.pdf" "file://$PWD/decks/led-truck-co-fleet.html"
+```
+
 ## Status
 Draft for internal review — responsive from 375px phones up to 1440px desktop, and marked `noindex`. Remove the `robots` meta tags, `robots.txt` and the `X-Robots-Tag` header in `netlify.toml` before launch.
 

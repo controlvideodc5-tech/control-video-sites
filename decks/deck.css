@@ -1,0 +1,68 @@
+/* Slide decks (1920 × 1080). On screen the slides scale to the window; printed, each slide is one 16:9 page. */
+@font-face{font-family:'Sora';src:url('../assets/sora-latin-wght-normal.woff2') format('woff2');font-weight:100 800;font-display:swap}
+@page{size:1920px 1080px;margin:0}
+
+:root{--ink:#08080C;--panel:#121218;--paper:#FFFFFF;--paper-panel:#F3F3F5;--muted-dark:#A6A6B0;--soft-dark:#D6D6DD;--muted-light:#55555F;--red:#E3262B;--font:Sora, system-ui, -apple-system, 'Segoe UI', sans-serif}
+*{box-sizing:border-box}
+html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{margin:0;background:#2a2a30;font-family:var(--font);color:var(--fg)}
+h1,h2,h3,p,ul,dl,figure{margin:0;padding:0}
+ul{list-style:none}
+img{display:block;width:100%;height:100%;object-fit:cover}
+
+.deck{display:flex;flex-direction:column;align-items:center;gap:24px;padding:24px 0}
+.slide{position:relative;width:1920px;height:1080px;flex-shrink:0;overflow:hidden;padding:96px 120px;display:flex;flex-direction:column;background:var(--bg);color:var(--fg);transform-origin:top left}
+.dark{--bg:var(--ink);--fg:#fff;--muted:var(--muted-dark);--soft:var(--soft-dark);--line:rgba(255,255,255,0.12);--card:var(--panel)}
+.light{--bg:var(--paper);--fg:var(--ink);--muted:var(--muted-light);--soft:var(--muted-light);--line:rgba(8,8,12,0.12);--card:var(--paper-panel)}
+@media print{
+  body{background:none}
+  .deck{display:block;padding:0}
+  .slide{page-break-after:always;break-after:page}
+  .slide:last-child{page-break-after:auto;break-after:auto}
+}
+
+/* Top and bottom bars on every slide */
+.bar{position:absolute;left:120px;right:120px;top:52px;display:flex;justify-content:space-between;align-items:center;font-size:20px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted)}
+.bar .mark{display:flex;align-items:center;gap:14px;color:var(--fg);letter-spacing:-0.01em;text-transform:none;font-size:26px}
+.bar .mark svg{width:38px;height:38px}
+.foot{position:absolute;left:120px;right:120px;bottom:48px;display:flex;justify-content:space-between;font-size:18px;color:var(--muted)}
+
+/* Type */
+.eyebrow{font-size:22px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--red)}
+.display{font-size:150px;line-height:0.92;letter-spacing:-0.025em;font-weight:700;text-transform:uppercase}
+.title{font-size:84px;line-height:1;letter-spacing:-0.02em;font-weight:600}
+.lede{font-size:32px;line-height:1.45;color:var(--soft);max-width:30ch}
+.body{font-size:24px;line-height:1.5;color:var(--muted)}
+.num{font-size:22px;font-weight:600;letter-spacing:0.08em;color:var(--red)}
+.h3{font-size:38px;line-height:1.15;font-weight:600}
+
+/* Layout helpers */
+.head{display:flex;justify-content:space-between;align-items:flex-end;gap:80px;margin-top:40px}
+.head .body{max-width:600px}
+.grow{flex:1;min-height:0}
+.row{display:flex;gap:32px}
+.grid{display:grid;gap:32px}
+.c2{grid-template-columns:repeat(2,1fr)}.c3{grid-template-columns:repeat(3,1fr)}.c4{grid-template-columns:repeat(4,1fr)}.c5{grid-template-columns:repeat(5,1fr)}
+.card{background:var(--card);border-radius:24px;padding:40px;display:flex;flex-direction:column;gap:14px}
+.photo{border-radius:24px;overflow:hidden;position:relative}
+.tag{position:absolute;top:22px;left:22px;padding:8px 16px;border-radius:999px;background:rgba(8,8,12,0.72);border:1px solid rgba(255,255,255,0.2);color:#fff;font-size:17px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase}
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:auto}
+.chips li{padding:8px 16px;border-radius:999px;border:1px solid var(--line);font-size:18px;font-weight:600;color:var(--fg)}
+
+/* Spec lists */
+.specs{display:grid;grid-template-columns:auto 1fr;gap:10px 24px;font-size:22px}
+.specs dt{color:var(--muted)}
+.specs dd{margin:0;font-weight:600;text-align:right}
+
+/* Fleet table */
+table{width:100%;border-collapse:collapse;font-size:24px}
+th{text-align:left;font-size:18px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);padding:0 16px 18px 0;border-bottom:2px solid var(--fg)}
+td{padding:20px 16px 20px 0;border-bottom:1px solid var(--line)}
+td:first-child{font-weight:700;font-size:28px}
+td.type{color:var(--muted)}
+
+/* Contact slide */
+.contact{display:flex;flex-direction:column;gap:14px;font-size:36px;font-weight:600}
+.contact span{color:var(--muted);font-weight:400;font-size:24px}
+.glow{background:radial-gradient(ellipse 60% 70% at 50% 110%, rgba(227,38,43,0.28) 0%, rgba(8,8,12,0) 70%), var(--bg)}
+.light.glow{background:radial-gradient(ellipse 60% 70% at 50% 110%, rgba(227,38,43,0.16) 0%, rgba(255,255,255,0) 70%), var(--bg)}

@@ -169,6 +169,12 @@ window.CV_BOT_SCRIPT = {
       'Thanks, {name} — our team has your event details. The people planning and running it will reply within one business day.',
       'Need help sooner? Call {phone}.'
     ],
+    // Shown after sending (and after opening the email fallback), with the buttons below.
+    followUp: 'While you wait, here’s a look at what we do.',
+    deckButton: 'Download our capabilities deck',        // Control Video site
+    fleetDeckButton: 'Download the fleet catalog',       // LED Truck Co. site
+    similarWorkButton: 'See similar work',               // opens Work, filtered to their event type
+    fleetButton: 'See the fleet',                        // LED Truck Co. site
     closeButton: 'Close',
     anotherButton: 'Start another',
     error: '{error} You can try again or send everything by email.',

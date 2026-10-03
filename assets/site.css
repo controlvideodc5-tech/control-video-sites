@@ -337,6 +337,7 @@ html.bot-open{overflow:hidden}
 .bot-chips:empty{display:none}
 .chip-btn{min-height:50px;padding:0 20px;border-radius:999px;border:1px solid var(--line-strong);background:transparent;color:var(--fg);font:600 clamp(17px, 1.3vw, 18px) var(--font);cursor:pointer}
 .chip-btn:hover{border-color:var(--fg)}
+a.chip-btn{display:inline-flex;align-items:center;text-decoration:none}
 .chip-btn.primary{background:var(--red);border-color:var(--red);color:#fff}
 .chip-btn.ghost{border-color:transparent;color:var(--muted)}
 .chip-btn[aria-pressed="true"]{background:var(--fg);border-color:var(--fg);color:var(--bg)}

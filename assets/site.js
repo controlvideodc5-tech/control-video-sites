@@ -541,6 +541,35 @@
       })();
     }
 
+    // A button that opens a link (downloads, other pages) instead of answering.
+    function linkChip(label, cls, href, download) {
+      var a = document.createElement('a');
+      a.className = 'chip-btn' + (cls ? ' ' + cls : '');
+      a.href = href;
+      a.textContent = label;
+      if (download) a.setAttribute('download', '');
+      else a.target = '_blank';
+      chips.appendChild(a);
+      return a;
+    }
+
+    // After sending: the capabilities deck (or fleet catalog) and work matching their event type.
+    var WORK_FILTER = { 'Gala / conference': 'galas', 'Corporate / forum': 'corporate', 'Festival / concert': 'festivals', 'Sporting / activation': 'sporting', 'Government / civic': 'civic' };
+    function followUp(then) {
+      botSays([fill(T.messages.followUp)], function () {
+        if (isLed || answers.eventType === 'LED truck rental') {
+          linkChip(T.messages.fleetDeckButton, 'primary', 'assets/decks/led-truck-co-fleet.pdf', true);
+          linkChip(T.messages.fleetButton, '', 'led-fleet.html');
+        } else {
+          var f = WORK_FILTER[answers.eventType];
+          linkChip(T.messages.deckButton, 'primary', 'assets/decks/control-video-capabilities.pdf', true);
+          linkChip(T.messages.similarWorkButton, '', 'work.html' + (f ? '?filter=' + f : ''));
+        }
+        then();
+        log.scrollTop = log.scrollHeight;
+      });
+    }
+
     function chip(label, cls, fn) {
       var b = document.createElement('button');
       b.type = 'button';
@@ -613,10 +642,10 @@
 
     function emailIt() {
       openEmail('Project inquiry: ' + answers.name, summaryRows().concat([['Came from', '5-things bot · ' + location.href]]));
-      botSays(lines(T.messages.emailOpening), function () {
-        chip(T.messages.closeButton, 'primary', function () { panel.close(); });
+      botSays(lines(T.messages.emailOpening), function () { followUp(function () {
+        chip(T.messages.closeButton, '', function () { panel.close(); });
         chip(T.messages.emailAgainButton, '', emailIt);
-      });
+      }); });
     }
 
     function send() {
@@ -639,10 +668,10 @@
           if (up && status) status.textContent = fill(T.messages.uploading, { file: up.file.name });
         }).then(function () {
           if (status) status.remove();
-          botSays(lines(T.messages.sent), function () {
-            chip(T.messages.closeButton, 'primary', function () { panel.close(); });
+          botSays(lines(T.messages.sent), function () { followUp(function () {
+            chip(T.messages.closeButton, '', function () { panel.close(); });
             chip(T.messages.anotherButton, '', start);
-          });
+          }); });
         }).catch(function (err) {
           if (status) status.remove();
           var msg = err && err.message ? err.message : 'Something went wrong.';
@@ -714,7 +743,7 @@
     });
   });
 
-  if (location.hash === '#talk' || location.hash === '#quote') bot.open();
+  if (location.hash === '#talk' || location.hash === '#quote') bot.open(null, isLed ? { eventType: 'LED truck rental', seeHear: 'LED truck or trailer' } : null);
   if (location.hash === '#message') getForm('inquiry').open();
   if (location.hash === '#careers') getForm('careers').open();
 })();
