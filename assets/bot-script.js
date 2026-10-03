@@ -57,6 +57,12 @@ window.CV_BOT_SCRIPT = {
       skip: 'Just me'
     },
 
+    eventType: {                                     // skipped when the visitor came from an LED truck link
+      say: ['What kind of event is it?'],
+      options: ['Gala / conference', 'Corporate / forum', 'Festival / concert', 'Sporting / activation',   // ⚠ OPTIONS
+                'Government / civic', 'LED truck rental', 'Other']
+    },
+
     // 1 ─ How many people?
     headcount: {
       say: [
@@ -73,7 +79,7 @@ window.CV_BOT_SCRIPT = {
 
     // 2 ─ Where is it?
     venue: {
-      say: ['2 of 5 · Where will the event take place?', 'Share the venue and room, if you know them.'],
+      say: ['2 of 5 · Where will the event take place?', 'Share the venue and room, if you know them, and anything the venue already provides, like in-house screens or sound.'],
       placeholder: 'e.g. Mellon Auditorium, main hall',
       skip: 'Not booked yet'
     },
@@ -84,8 +90,8 @@ window.CV_BOT_SCRIPT = {
 
     // 3 ─ When?
     showTime: {
-      say: ['3 of 5 · When is the event? Include the date and start time if you know them.'],
-      placeholder: 'e.g. Fri Mar 14, 7 pm',
+      say: ['3 of 5 · When is the event? If it runs more than one day, list each day, with start times if you know them.'],
+      placeholder: 'e.g. Fri Mar 14, 7 pm, or Mar 14–16',
       skip: 'Not set yet'
     },
     loadIn: {
@@ -123,7 +129,7 @@ window.CV_BOT_SCRIPT = {
     },
 
     files: {
-      say: ['Have a floor plan or run of show? Upload it or paste a link.'],
+      say: ['Have a floor plan, run of show, or venue specs? Upload them or paste a link.'],
       placeholder: 'Paste a link, or tap Add files',
       addButton: 'Add files',
       noneButton: 'Nothing to send',
@@ -151,7 +157,7 @@ window.CV_BOT_SCRIPT = {
 
   // Labels on the recap card shown before sending
   summary: {
-    name: 'Name', contact: 'Reach you at', people: 'People', where: 'Where', when: 'When',
+    name: 'Name', contact: 'Reach you at', eventType: 'Event', people: 'People', where: 'Where', when: 'When',
     seeHear: 'See & hear', mustLand: 'Key moment', budget: 'Budget', files: 'Files', note: 'Note',
     loadIn: 'in', outBy: 'out by'
   },

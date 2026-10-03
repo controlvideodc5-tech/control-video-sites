@@ -422,6 +422,8 @@
       { key: 'contact', say: function () { return lines(ST.contact.say); }, text: ST.contact.placeholder, required: true,
         check: function (v) { return /@/.test(v) ? (/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v) ? '' : fill(ST.contact.badEmail)) : ((v.match(/\d/g) || []).length >= 7 ? '' : fill(ST.contact.badPhone)); } },
       { key: 'organization', say: function () { return lines(ST.organization.say); }, text: ST.organization.placeholder, skip: ST.organization.skip },
+      // Skipped when it's already known, e.g. the visitor clicked an LED truck booking link.
+      { key: 'eventType', say: function () { return lines(ST.eventType.say); }, chips: ST.eventType.options, when: function () { return !answers.eventType; } },
       { key: 'headcount', say: function () { return lines(ST.headcount.say); }, text: ST.headcount.placeholder, skip: ST.headcount.skip },
       { key: 'headcountIs', say: function () { return lines(ST.headcountIs.say); }, chips: ST.headcountIs.options, when: function () { return !!answers.headcount; } },
       { key: 'venue', say: function () { return lines(ST.venue.say); }, text: ST.venue.placeholder, skip: ST.venue.skip },
@@ -449,6 +451,7 @@
       return [
         [T.summary.name, answers.name + (answers.organization ? ', ' + answers.organization : '')],
         [T.summary.contact, answers.contact],
+        [T.summary.eventType, answers.eventType],
         [T.summary.people, [answers.headcount, answers.headcountIs && answers.headcountIs.toLowerCase()].filter(Boolean).join(' · ')],
         [T.summary.where, [answers.venue, answers.setting].filter(Boolean).join(' · ')],
         [T.summary.when, [answers.showTime, answers.loadIn && T.summary.loadIn + ' ' + answers.loadIn, answers.outBy && T.summary.outBy + ' ' + answers.outBy].filter(Boolean).join(' · ')],
